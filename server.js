@@ -117,7 +117,7 @@ app.post('/api/admin/login', async (req, res) => {
 //               PRODUCTS API
 // ==========================================
 
-app.get('*', (req, res) => {
+app.get('(.*)', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
