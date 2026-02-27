@@ -117,7 +117,8 @@ app.post('/api/admin/login', async (req, res) => {
 //               PRODUCTS API
 // ==========================================
 
-app.get('(.*)', (req, res) => {
+// This is a "Regex" that matches any URL
+app.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
