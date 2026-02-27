@@ -599,6 +599,6 @@ app.put('/api/admin/reviews/:id/approve', verifyAdmin, async (req, res) => {
 });
 // --- SERVER LISTEN ---
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Coffee Shop Server is running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT}`);
 });
