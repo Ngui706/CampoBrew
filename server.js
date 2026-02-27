@@ -4,10 +4,12 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const path = require('path');
 
 const app = express();
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 const corsOptions = {
@@ -114,6 +116,11 @@ app.post('/api/admin/login', async (req, res) => {
 // ==========================================
 //               PRODUCTS API
 // ==========================================
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 
 // Public: Get all products (with optional search & category filters)
 app.get('/api/products', async (req, res) => {
