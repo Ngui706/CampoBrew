@@ -4,7 +4,7 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const path = require('path');
+
 
 const app = express();
 app.use(express.json());
@@ -29,7 +29,6 @@ app.use(
   })
 );
 
-app.use(express.static(path.join(__dirname, 'public')));
 
 
 
@@ -56,9 +55,7 @@ const verifyAdmin = (req, res, next) => {
 // favicon.ico route to prevent unnecessary 404 errors in logs
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+
 
 // Admin Registration (Secure this with a secret key in .env)
 app.post('/api/admin/register', async (req, res) => {
