@@ -8,7 +8,23 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+const cors = require('cors');
+
+const corsOptions = {
+    // 1. Allow your live Render URL and Localhost (for testing)
+    origin: [
+        'https://campobrew.onrender.com', 
+        'https://techsips-brew.onrender.com'
+    ],
+    // 2. Explicitly allow CRUD methods
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    // 3. Allow headers needed for JSON and Admin Tokens
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    // 4. Success status for older browsers
+    optionsSuccessStatus: 200 
+};
+
+app.use(cors(corsOptions));
 
 // --- DATABASE CONNECTION (PostgreSQL) ---
 const pool = new Pool({
