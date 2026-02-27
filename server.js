@@ -117,11 +117,6 @@ app.post('/api/admin/login', async (req, res) => {
 //               PRODUCTS API
 // ==========================================
 
-// This is a "Regex" that matches any URL
-app.get(/.*/, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
 
 // Public: Get all products (with optional search & category filters)
 app.get('/api/products', async (req, res) => {
@@ -604,6 +599,11 @@ app.post('/api/reviews', async (req, res) => {
 app.put('/api/admin/reviews/:id/approve', verifyAdmin, async (req, res) => {
     await pool.query('UPDATE reviews SET approved = TRUE WHERE id = $1', [req.params.id]);
     res.json({ message: "Review approved and visible" });
+});
+
+// This is a "Regex" that matches any URL
+app.get(/.*/, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 // --- SERVER LISTEN ---
 const PORT = process.env.PORT || 5000;
