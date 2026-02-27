@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(express.json());
-const cors = require('cors');
+
 
 const corsOptions = {
     // 1. Allow your live Render URL and Localhost (for testing)
