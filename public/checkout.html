@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | TechSips Coffee</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+   
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        coffee: { light: '#F5EBE0', DEFAULT: '#D5BDAF', medium: '#C38E70', dark: '#3A2618' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-coffee-light font-sans text-coffee-dark">
+
+    <nav class="bg-white shadow-sm p-4 mb-6 md:mb-10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="products.html" class="text-coffee-medium font-bold flex items-center gap-2 hover:text-coffee-dark transition">
+                <i class="fa-solid fa-arrow-left"></i> 
+                <span class="hidden sm:inline">Back to Shop</span>
+                <span class="sm:hidden">Shop</span>
+            </a>
+            <h1 class="text-xl font-serif font-bold text-coffee-dark">TechSips Checkout</h1>
+            <div class="w-10"></div> </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 pb-20">
+        
+        <div id="checkout-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2 order-2 lg:order-1">
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-truck-fast text-coffee-medium"></i> Shipping Details
+                    </h2>
+                    
+                    <form id="order-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="text-xs font-bold uppercase text-gray-400">Full Name</label>
+                                <input type="text" id="cust-name" placeholder="Kevin Mwangi" required 
+                                    class="w-full mt-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-coffee-medium transition">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold uppercase text-gray-400">Email Address</label>
+                                <input type="email" id="cust-email" placeholder="kevin@example.com" required 
+                                    class="w-full mt-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-coffee-medium transition">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold uppercase text-gray-400">Phone Number</label>
+                                <input type="tel" id="cust-phone" placeholder="0712 345 678" required 
+                                    class="w-full mt-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-coffee-medium transition">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="text-xs font-bold uppercase text-gray-400">Shipping Location</label>
+                                <textarea id="cust-address" placeholder="Apartment, Street, City" required rows="3" 
+                                    class="w-full mt-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-coffee-medium transition"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1 order-1 lg:order-2">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 lg:sticky lg:top-24">
+                    <h2 class="text-xl font-bold mb-6">Order Summary</h2>
+                    
+                    
+                    <div id="cart-items-list" class="space-y-4 mb-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                        </div>
+                    
+                    <div class="border-t pt-4 space-y-3">
+                        <div class="flex justify-between text-gray-500 text-sm">
+                            <span>Subtotal</span>
+                            <span id="subtotal">KSh 0.00</span>
+                        </div>
+                        <div class="flex justify-between text-gray-500 text-sm">
+                            <span>Shipping Cost</span>
+                            <span class="text-green-600 font-bold">FREE</span>
+                        </div>
+                        <div class="flex justify-between text-xl font-bold pt-3 border-t text-coffee-dark">
+                            <span>Total</span>
+                            <span id="total-price">KSh 0.00</span>
+                        </div>
+                    </div>
+
+                    <button onclick="submitOrder()" id="place-order-btn" 
+                        class="w-full mt-8 bg-coffee-dark hover:bg-coffee-medium text-white font-bold py-4 rounded-xl shadow-lg transition duration-300 transform active:scale-95">
+                        Place My Order
+                    </button>
+                    
+                    <p class="text-[10px] text-center text-gray-400 mt-4 uppercase tracking-widest">
+                        <i class="fa-solid fa-lock"></i> Secure Checkout
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="success-screen" class="hidden text-center py-10 md:py-20 animate-pulse-once">
+            <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h2 class="text-3xl font-serif font-bold mb-4">Brewing Success!</h2>
+            <p class="text-gray-600 mb-8 max-w-md mx-auto">Your order has been received. Our baristas are preparing your batch right now.</p>
+            <a href="index.html" class="inline-block bg-coffee-dark text-white px-10 py-4 rounded-xl font-bold hover:bg-coffee-medium transition">
+                Continue Shopping
+            </a>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let cart = JSON.parse(localStorage.getItem('coffee_cart')) || [];
+
+        document.addEventListener('DOMContentLoaded', renderOrderSummary);
+
+        function renderOrderSummary() {
+            const list = document.getElementById('cart-items-list');
+            const subtotalEl = document.getElementById('subtotal');
+            const totalEl = document.getElementById('total-price');
+            const orderBtn = document.getElementById('place-order-btn');
+
+            if (cart.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-10">
+                        <p class="text-gray-400 italic text-sm">Your cart is empty.</p>
+                        <a href="products.html" class="text-coffee-medium text-xs underline mt-2 inline-block">Go add some coffee!</a>
+                    </div>`;
+                orderBtn.disabled = true;
+                orderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+
+            orderBtn.disabled = false;
+            orderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            let total = 0;
+            list.innerHTML = cart.map((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                return `
+                    <div class="flex items-center justify-between gap-4 bg-gray-50/50 p-3 rounded-xl border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.img || item.image_url}" class="w-12 h-12 rounded-lg object-cover shadow-sm">
+                            <div>
+                                <p class="font-bold text-xs text-coffee-dark leading-tight">${item.name}</p>
+                                <p class="text-[10px] text-gray-500 font-bold mt-1">KSh ${item.price}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-lg p-1">
+                            <button onclick="updateQty(${index}, -1)" class="w-6 h-6 flex items-center justify-center text-coffee-medium hover:bg-coffee-light rounded transition">-</button>
+                            <span class="text-xs font-bold w-4 text-center">${item.quantity}</span>
+                            <button onclick="updateQty(${index}, 1)" class="w-6 h-6 flex items-center justify-center text-coffee-medium hover:bg-coffee-light rounded transition">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            subtotalEl.innerText = `KSh ${total.toFixed(2)}`;
+            totalEl.innerText = `KSh ${total.toFixed(2)}`;
+        }
+
+        function updateQty(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                if (confirm("Remove this item from your cart?")) {
+                    cart.splice(index, 1);
+                } else {
+                    cart[index].quantity = 1;
+                }
+            }
+            localStorage.setItem('coffee_cart', JSON.stringify(cart));
+            renderOrderSummary();
+        }
+
+        async function submitOrder() {
+            const name = document.getElementById('cust-name').value;
+            const email = document.getElementById('cust-email').value;
+            const phone = document.getElementById('cust-phone').value;
+            const address = document.getElementById('cust-address').value;
+
+            if (!name || !email || !phone || !address) {
+                alert("Please fill in all shipping and contact details.");
+                return;
+            }
+
+            const btn = document.getElementById('place-order-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "Processing Order...";
+            btn.disabled = true;
+
+            const orderData = {
+                customer_name: name,
+                customer_email: email,
+                customer_phone: phone,
+                shipping_address: address,
+                total_price: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                items: cart.map(item => ({
+                    product_id: item.id,
+                    quantity: item.quantity,
+                    price: item.price
+                }))
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+
+                if (response.ok) {
+                    localStorage.removeItem('coffee_cart');
+                    document.getElementById('checkout-container').classList.add('hidden');
+                    document.getElementById('success-screen').classList.remove('hidden');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    throw new Error("Order submission failed");
+                }
+            } catch (err) {
+                alert("Error: Could not place order. Ensure your server is running.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #D5BDAF; border-radius: 10px; }
+        
+        @keyframes pulse-once {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animate-pulse-once { animation: pulse-once 0.5s ease-out forwards; }
+    </style>
+</body>
+</html>

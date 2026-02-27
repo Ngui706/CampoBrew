@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Reviews | TechSips</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        coffee: { light: '#F5EBE0', DEFAULT: '#D5BDAF', medium: '#C38E70', dark: '#3A2618' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-coffee-light font-sans text-coffee-dark">
+
+    <nav class="bg-white shadow-md p-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-serif font-bold text-coffee-dark">TechSips</a>
+            <div class="flex items-center gap-6">
+                <a href="products.html" class="hover:text-coffee-medium transition font-semibold">Shop</a>
+                <a href="checkout.html" class="relative group">
+                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-coffee-medium text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">Community Feedback</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">See what our fellow coffee lovers are saying about their daily brew.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            <div class="lg:col-span-1">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-coffee-medium"></i> Write a Review
+                    </h2>
+                    
+                    <form id="review-form" onsubmit="submitReview(event)" class="space-y-4">
+                        <div>
+                            <label class="text-xs font-bold uppercase text-gray-400">Your Name</label>
+                            <input type="text" id="rev-name" required placeholder="e.g. Mwangi J." 
+                                class="w-full mt-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-coffee-medium transition">
+                        </div>
+                        
+                        <div>
+                            <label class="text-xs font-bold uppercase text-gray-400">Rating</label>
+                            <select id="rev-rating" class="w-full mt-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-coffee-medium transition bg-white">
+                                <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+                                <option value="4">⭐⭐⭐⭐ (Very Good)</option>
+                                <option value="3">⭐⭐⭐ (Good)</option>
+                                <option value="2">⭐⭐ (Fair)</option>
+                                <option value="1">⭐ (Poor)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold uppercase text-gray-400">Your Experience</label>
+                            <textarea id="rev-comment" required rows="4" placeholder="How was the aroma and roast?" 
+                                class="w-full mt-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-coffee-medium transition"></textarea>
+                        </div>
+
+                        <button type="submit" id="submit-btn" class="w-full bg-coffee-dark hover:bg-coffee-medium text-white font-bold py-3 rounded-xl transition shadow-lg">
+                            Post Review
+                        </button>
+                        <p class="text-[10px] text-center text-gray-400 italic">
+                            * Reviews are verified by our team before appearing live.
+                        </p>
+                    </form>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2">
+                <div id="reviews-display" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="col-span-full text-center py-20 text-gray-400">
+                        <i class="fa-solid fa-circle-notch animate-spin text-3xl mb-4"></i>
+                        <p>Loading verified reviews...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="main.js"></script>
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        // Load only approved reviews
+        async function loadApprovedReviews() {
+            try {
+                const res = await fetch(`${API_URL}/reviews`);
+                const reviews = await res.json();
+                const container = document.getElementById('reviews-display');
+                
+                if (reviews.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full bg-white p-10 rounded-2xl text-center border-2 border-dashed">
+                            <i class="fa-solid fa-comments text-gray-200 text-5xl mb-4"></i>
+                            <p class="text-gray-500 font-medium">No reviews yet. Be the first to share your experience!</p>
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = reviews.map(r => `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-10 h-10 bg-coffee-light rounded-full flex items-center justify-center font-bold text-coffee-dark uppercase">
+                                    ${r.user_name.charAt(0)}
+                                </div>
+                                <div class="text-xs font-bold text-orange-400">
+                                    ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}
+                                </div>
+                            </div>
+                            <p class="text-gray-700 italic text-sm leading-relaxed mb-4">"${r.comment}"</p>
+                        </div>
+                        <div class="border-t pt-3 mt-auto">
+                            <p class="font-bold text-xs text-coffee-dark">${r.user_name}</p>
+                            <p class="text-[10px] text-gray-400 uppercase tracking-tighter">${new Date(r.created_at).toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error("Failed to load reviews:", err);
+            }
+        }
+
+        // Submit new review
+        async function submitReview(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "Submitting...";
+            btn.disabled = true;
+
+            const payload = {
+                user_name: document.getElementById('rev-name').value,
+                rating: parseInt(document.getElementById('rev-rating').value),
+                comment: document.getElementById('rev-comment').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/reviews`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alert("Asante! Your review has been sent for verification.");
+                    e.target.reset();
+                }
+            } catch (err) {
+                alert("Could not submit review. Please try again later.");
+            } finally {
+                btn.innerText = "Post Review";
+                btn.disabled = false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadApprovedReviews();
+            if (typeof updateGlobalCartCount === 'function') updateGlobalCartCount();
+        });
+    </script>
+</body>
+</html>

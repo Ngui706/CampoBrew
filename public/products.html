@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <title>Shop Our Coffee | TechSips</title>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        coffee: { light: '#F5EBE0', DEFAULT: '#D5BDAF', medium: '#C38E70', dark: '#3A2618' }
+                    }
+                }
+            }
+        }
+
+
+    </script>
+</head>
+<body class="bg-coffee-light font-sans text-coffee-dark">
+
+    <nav class="bg-white shadow-md sticky top-0 z-50 p-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold font-serif text-coffee-dark">
+                <i class="fa-solid fa-mug-hot text-coffee-medium mr-2"></i>TechSips
+            </a>
+           <div class="flex items-center gap-6">
+    <a href="products.html" class="hover:text-coffee-medium border-b-2 border-coffee-medium">Shop</a>
+    
+    <a href="checkout.html" id="cart-btn" class="relative group">
+        <i class="fa-solid fa-cart-shopping text-xl transition-colors group-hover:text-coffee-medium"></i>
+        <span id="cart-count" class="absolute -top-2 -right-2 bg-coffee-medium text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">
+            0
+        </span>
+    </a>
+</div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-10">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+            <h1 class="text-3xl font-serif font-bold">All Products</h1>
+            
+            <div class="flex w-full md:w-auto gap-2">
+                <input type="text" id="search-input" placeholder="Search coffee..." class="w-full md:w-64 p-3 rounded-lg border focus:ring-2 focus:ring-coffee-medium outline-none">
+                <button onclick="applyFilters()" class="bg-coffee-dark text-white px-6 py-2 rounded-lg hover:bg-coffee-medium transition">Search</button>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-8">
+            <aside class="w-full md:w-64 space-y-6">
+                <div>
+                    <h3 class="font-bold uppercase text-sm tracking-widest mb-4">Categories</h3>
+                    <div class="flex flex-wrap md:flex-col gap-2">
+                        <button onclick="filterByCategory('all')" class="cat-btn bg-coffee-dark text-white px-4 py-2 rounded text-left text-sm">All Products</button>
+                        <button onclick="filterByCategory('Plain Coffee')" class="cat-btn bg-white hover:bg-coffee-medium hover:text-white px-4 py-2 rounded text-left text-sm transition">Plain Coffee</button>
+                        <button onclick="filterByCategory('Ginger')" class="cat-btn bg-white hover:bg-coffee-medium hover:text-white px-4 py-2 rounded text-left text-sm transition">Ginger Coffee</button>
+                        <button onclick="filterByCategory('Lemon Coffee')" class="cat-btn bg-white hover:bg-coffee-medium hover:text-white px-4 py-2 rounded text-left text-sm transition">Lemon Coffee</button>
+                        <button onclick="filterByCategory('Merchandise')" class="cat-btn bg-white hover:bg-coffee-medium hover:text-white px-4 py-2 rounded text-left text-sm transition">Merchandise</button>
+                    </div>
+                </div>
+            </aside>
+
+            <div id="product-grid" class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+let allProducts = [];
+let currentCategory = 'all';
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchProducts();
+    updateCartBadge();
+});
+
+// 1. Fetch products from Express API
+async function fetchProducts() {
+    try {
+        const response = await fetch(`${API_URL}/products`);
+        allProducts = await response.json();
+        renderProducts(allProducts);
+    } catch (err) {
+        console.error('Error fetching products:', err);
+        document.getElementById('product-grid').innerHTML = `<p class="text-red-500">Could not load products. Is the server running?</p>`;
+    }
+}
+
+// 2. Render Products into Grid
+function renderProducts(products) {
+    const grid = document.getElementById('product-grid');
+    grid.innerHTML = products.map(product => `
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-4 border border-gray-100 flex flex-col">
+            <div class="h-56 overflow-hidden rounded-lg mb-4">
+                <img src="${product.image_url}" alt="${product.name}" class="w-full h-full object-cover">
+            </div>
+            <span class="text-[10px] font-bold uppercase text-coffee-medium mb-1">${product.category}</span>
+            <h3 class="text-lg font-bold mb-2">${product.name}</h3>
+            <p class="text-gray-500 text-sm mb-4 line-clamp-2">${product.description}</p>
+            <div class="mt-auto flex justify-between items-center">
+                <span class="text-xl font-bold">KSh ${parseFloat(product.price).toFixed(2)}</span>
+                <button onclick="addToCart(${product.id}, '${product.name}', ${product.price}, '${product.image_url}')" 
+                        class="bg-coffee-dark text-white px-4 py-2 rounded-lg hover:bg-coffee-medium transition flex items-center gap-2">
+                    <i class="fa-solid fa-cart-plus"></i> Add
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 3. Search & Category Filters
+function applyFilters() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    
+    let filtered = allProducts.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchTerm);
+        const matchesCategory = currentCategory === 'all' || p.category === currentCategory;
+        return matchesSearch && matchesCategory;
+    });
+
+    renderProducts(filtered);
+}
+
+function filterByCategory(cat) {
+    currentCategory = cat;
+    
+    // Update button styles
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.remove('bg-coffee-dark', 'text-white');
+        btn.classList.add('bg-white');
+    });
+    event.target.classList.add('bg-coffee-dark', 'text-white');
+
+    applyFilters();
+}
+
+// 4. Cart Logic
+function addToCart(id, name, price, img) {
+    let cart = JSON.parse(localStorage.getItem('coffee_cart')) || [];
+    
+    const index = cart.findIndex(item => item.id === id);
+    if (index > -1) {
+        cart[index].quantity += 1;
+    } else {
+        cart.push({ id, name, price, img, quantity: 1 });
+    }
+
+    localStorage.setItem('coffee_cart', JSON.stringify(cart));
+    updateCartBadge();
+    
+    // Toast notification (simple alert for now)
+    console.log(`${name} added!`);
+}
+
+function updateCartBadge() {
+    const cart = JSON.parse(localStorage.getItem('coffee_cart')) || [];
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    document.getElementById('cart-count').innerText = count;
+}
+    </script>
+</body>
+</html>

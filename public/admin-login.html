@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <title>Admin Login | TechSips</title>
+</head>
+<body class="bg-[#F5EBE0] font-['Poppins'] flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md border-t-8 border-[#3A2618]">
+        <div class="text-center mb-8">
+            <h1 class="font-['Playfair_Display'] text-3xl font-bold text-[#3A2618]">Welcome Back</h1>
+            <p class="text-gray-500 text-sm mt-2">Enter your credentials to manage the shop</p>
+        </div>
+
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700">Email Address</label>
+                <input type="email" id="email" required class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C38E70] outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700">Password</label>
+                <input type="password" id="password" required class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C38E70] outline-none">
+            </div>
+            
+            <button type="submit" class="w-full bg-[#3A2618] text-white font-bold py-3 rounded-lg hover:bg-[#C38E70] transition duration-300 shadow-lg">
+                Sign In
+            </button>
+        </form>
+
+        <p class="text-center text-sm text-gray-500 mt-6">
+            New admin? <a href="admin-register.html" class="text-[#C38E70] font-bold hover:underline">Register here</a>
+        </p>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('adminToken', data.token);
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    alert(data.error || 'Login failed');
+                }
+            } catch (err) {
+                alert('Server connection error');
+            }
+        });
+    </script>
+</body>
+</html>

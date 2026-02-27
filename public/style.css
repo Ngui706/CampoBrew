@@ -1,0 +1,71 @@
+/* 1. Mobile Menu Logic */
+#mobile-menu {
+    display: none; /* Hidden by default */
+    transition: all 0.3s ease-in-out;
+}
+
+#mobile-menu.active {
+    display: block;
+    animation: slideDown 0.4s ease forwards;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 2. Responsive Grid System (Manual fallback for Tailwind) */
+.product-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr; /* Mobile: 1 column */
+}
+
+@media (min-width: 640px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr); /* Tablet: 2 columns */
+    }
+}
+
+@media (min-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr); /* Desktop: 3 columns */
+    }
+}
+
+/* 3. Admin Table Responsiveness */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Allows horizontal swipe on small screens */
+    -webkit-overflow-scrolling: touch;
+    border-radius: 0.75rem;
+}
+
+/* 4. Checkout Form Stacking */
+@media (max-width: 768px) {
+    .checkout-layout {
+        flex-direction: column;
+    }
+    
+    .sidebar-sticky {
+        position: static; /* Summary follows form on mobile */
+        margin-top: 2rem;
+    }
+}
+
+/* 5. Utility for Touch Devices */
+button, a {
+    min-height: 44px; /* Apple/Google standard for thumb-taps */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Makes the cart count "pop" slightly when it changes */
+#cart-count {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cart-bounce {
+    transform: scale(1.2);
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story | TechSips</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+  
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { coffee: { light: '#F5EBE0', DEFAULT: '#D5BDAF', medium: '#C38E70', dark: '#3A2618' } },
+                    fontFamily: { sans: ['Poppins', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-coffee-light text-coffee-dark font-sans flex flex-col min-h-screen">
+
+    <nav class="bg-white shadow-md p-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold font-serif text-coffee-dark">TechSips</a>
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="text-gray-600 hover:text-coffee-medium transition">Home</a>
+                <a href="about.html" class="text-coffee-medium font-medium border-b-2 border-coffee-medium">About</a>
+                <a href="products.html" class="text-gray-600 hover:text-coffee-medium transition">Shop</a>
+                <a href="blog.html" class="text-gray-600 hover:text-coffee-medium transition">Blog</a>
+                <a href="contact.html" class="text-gray-600 hover:text-coffee-medium transition">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-16">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-serif font-bold mb-6 text-coffee-dark">Rooted in Tradition</h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">We are more than just a coffee shop. We are a community of passionate roasters, ethical sourcers, and daily brewers.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
+            <div>
+                <img src="https://i.pinimg.com/736x/21/74/32/2174329b8ef1603c1cbc68bd9ef5865a.jpg" alt="Roasting Beans" class="rounded-2xl shadow-lg w-full object-cover h-96">
+            </div>
+            <div>
+                <h2 class="text-3xl font-serif font-bold mb-4">Our Roasting Philosophy</h2>
+                <p class="text-gray-600 mb-4 leading-relaxed">Every bean tells a story of its origin. Our job is simply to listen. We roast in small batches to ensure that the unique climate, soil, and care of the farmers translate directly into your cup.</p>
+                <p class="text-gray-600 leading-relaxed">By partnering directly with farmers country wide and investing in sustainable practices, we ensure that our coffee is not only delicious but also ethically sourced.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-coffee-dark text-gray-400 py-6 text-center text-sm">
+        &copy; 2026 TechSips. All rights reserved.
+    </footer>
+
+</body>
+</html>
