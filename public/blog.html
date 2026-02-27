@@ -6,6 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
    
     <script>
         tailwind.config = { 
@@ -48,7 +49,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const grid = document.getElementById('blog-grid');
             try {
-                const response = await fetch('http://localhost:5000/api/blogs');
+                const response = await fetch(`${API_URL}/blogs`);
                 const blogs = await response.json();
                 
                 if(blogs.length === 0) {

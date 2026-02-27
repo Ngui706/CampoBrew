@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
     
     <script>
         tailwind.config = { theme: { extend: { colors: { coffee: { light: '#F5EBE0', DEFAULT: '#D5BDAF', medium: '#C38E70', dark: '#3A2618' } }, fontFamily: { sans: ['Poppins'], serif: ['Playfair Display'] } } } }
@@ -94,7 +95,7 @@
             };
 
             try {
-                const response = await fetch('http://localhost:5000/api/contact', {
+                const response = await fetch(`${API_URL}/contact`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)

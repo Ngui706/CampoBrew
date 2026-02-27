@@ -15,6 +15,19 @@ const pool = new Pool({
     // e.g., postgres://username:password@localhost:5432/coffee_shop
 });
 
+const helmet = require('helmet');
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      "default-src": ["'self'"], // Allow resources from your own domain
+      "script-src": ["'self'", "https://cdn.tailwindcss.com", "https://cdnjs.cloudflare.com"], // Allow your UI libraries
+      "img-src": ["'self'", "data:", "https://*"], // Allow images from yourself and external links
+      "connect-src": ["'self'", "https://campobrew.onrender.com"] // Allow API calls to your backend
+    },
+  })
+);
+
 // --- MIDDLEWARE ---
 const verifyAdmin = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -34,6 +47,10 @@ const verifyAdmin = (req, res, next) => {
 // ==========================================
 //               AUTHENTICATION
 // ==========================================
+
+// favicon.ico route to prevent unnecessary 404 errors in logs
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 // Admin Registration (Secure this with a secret key in .env)
 app.post('/api/admin/register', async (req, res) => {
     const { name, email, password, adminSecret } = req.body;

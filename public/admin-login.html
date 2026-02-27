@@ -5,6 +5,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
     
     <title>Admin Login | TechSips</title>
 </head>
@@ -43,7 +44,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch('http://localhost:5000/api/admin/login', {
+                const response = await fetch(`${API_URL}/admin/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
