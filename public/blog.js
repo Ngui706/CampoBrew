@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     <div class="p-6 pt-0 mt-auto border-t border-gray-50">
                         <button 
-                            class="blog-toggle text-coffee-medium font-bold text-sm hover:text-coffee-dark mt-4 inline-block transition-colors"
+                            class="blog-toggle bg-coffee-dark text-white font-bold text-sm hover:bg-coffee-medium mt-4 inline-block px-3 py-1 rounded transition-colors"
                             data-index="${index}"
                         >
                             Read Article →
