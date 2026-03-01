@@ -54,64 +54,6 @@
         </div>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const grid = document.getElementById('blog-grid');
-            try {
-                const response = await fetch(`${API_URL}/blogs`);
-                const blogs = await response.json();
-                
-                if(blogs.length === 0) {
-                    grid.innerHTML = '<p class="text-center col-span-full text-gray-500">No journal entries yet. Check back soon!</p>';
-                    return;
-                }
-
-                // Added an 'index' to uniquely identify each article and button
-                grid.innerHTML = blogs.map((blog, index) => `
-                    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 flex flex-col transition hover:shadow-md">
-                        <div class="p-6 flex-grow">
-                            <h2 class="text-xl font-serif font-bold mb-2 text-coffee-dark">${blog.title}</h2>
-                            <p class="text-xs text-gray-400 mb-4 uppercase tracking-wider">By ${blog.author} &bull; ${new Date(blog.created_at).toLocaleDateString()}</p>
-                            
-                            <div id="content-${index}" class="text-gray-600 text-sm line-clamp-4 whitespace-pre-wrap transition-all duration-300">${blog.content}</div>
-                        </div>
-                        <div class="p-6 pt-0 mt-auto border-t border-gray-50">
-                            <button id="btn-${index}" onclick="toggleArticle(${index})" class="text-coffee-medium font-bold text-sm hover:text-coffee-dark mt-4 inline-block transition-colors">
-                                Read Article &rarr;
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (err) {
-                grid.innerHTML = '<p class="text-center col-span-full text-red-500">Failed to load the journal.</p>';
-            }
-
-            // toggle mobile menu (single shared block)
-            const navToggle = document.querySelector('.nav-toggle');
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (navToggle && mobileMenu) {
-                navToggle.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('active');
-                });
-            }
-        });
-
-        // The logic to expand/collapse the text
-        function toggleArticle(index) {
-            const contentElement = document.getElementById(`content-${index}`);
-            const btnElement = document.getElementById(`btn-${index}`);
-
-            // Check if it's currently clamped (collapsed)
-            if (contentElement.classList.contains('line-clamp-4')) {
-                // Expand it
-                contentElement.classList.remove('line-clamp-4');
-                btnElement.innerHTML = '&larr; Read Less';
-            } else {
-                // Collapse it back
-                contentElement.classList.add('line-clamp-4');
-                btnElement.innerHTML = 'Read Article &rarr;';
-            }
-        }
-    </script>
+    <script src="blog.js"></script>
 </body>
 </html>
