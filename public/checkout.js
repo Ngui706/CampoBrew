@@ -1,4 +1,5 @@
- const API_URL = 'https://campobrew.onrender.com/api';
+const API_URL = 'https://campobrew.onrender.com/api';
+ 
         let cart = JSON.parse(localStorage.getItem('coffee_cart')) || [];
 
         document.addEventListener('DOMContentLoaded', renderOrderSummary);
@@ -84,8 +85,8 @@
                 customer_email: email,
                 customer_phone: phone,
                 shipping_address: address,
-                total_price: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-                items: cart.map(item => ({
+                total_price: cart.reduce((sum,item)=>sum+item.price*item.quantity,0),
+                items: cart.map(item=>({
                     product_id: item.id,
                     quantity: item.quantity,
                     price: item.price

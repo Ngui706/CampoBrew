@@ -4,8 +4,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const grid = document.getElementById('blog-grid');
 
     try {
-        const response = await fetch(`${API_URL}/api/blogs`);
-        if (!response.ok) throw new Error("Failed to fetch blogs");
+        // API_URL already ends with /api
+        const response = await fetch(`${API_URL}/blogs`);
+        if (!response.ok) throw new Error(`status ${response.status}`);
 
         const blogs = await response.json();
 
