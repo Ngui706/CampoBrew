@@ -69,3 +69,58 @@ button, a {
 .cart-bounce {
     transform: scale(1.2);
 }
+
+/* 6. Global responsive helpers */
+img, video, iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. Mobile navigation toggling (used by header) */
+.header-container {
+    position: relative;
+}
+
+.nav-toggle {
+    display: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--tw-text-coffee-dark);
+}
+
+#mobile-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    width: 200px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 0.5rem;
+}
+
+#mobile-menu a {
+    display: block;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #eee;
+    color: var(--tw-text-coffee-dark);
+}
+
+#mobile-menu a:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) {
+    .nav-toggle {
+        display: block;
+    }
+
+    nav.desktop-nav {
+        display: none !important;
+    }
+
+    /* make footer columns stack vertically on small screens */
+    .footer-columns {
+        flex-direction: column;
+        gap: 2rem;
+    }
+}

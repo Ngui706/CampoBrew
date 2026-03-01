@@ -5,6 +5,14 @@ let currentCategory = 'all';
 document.addEventListener('DOMContentLoaded', () => {
     fetchProducts();
     updateCartBadge();
+
+    const navToggle = document.querySelector('.nav-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (navToggle && mobileMenu) {
+        navToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
+    }
 });
 
 // 1. Fetch products from Express API

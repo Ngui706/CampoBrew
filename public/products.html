@@ -30,7 +30,7 @@
             <a href="index.html" class="text-2xl font-bold font-serif text-coffee-dark">
                 <i class="fa-solid fa-mug-hot text-coffee-medium mr-2"></i>TechSips
             </a>
-           <div class="flex items-center gap-6">
+            <nav class="desktop-nav flex items-center gap-6">
     <a href="products.html" class="hover:text-coffee-medium border-b-2 border-coffee-medium">Shop</a>
     
     <a href="checkout.html" id="cart-btn" class="relative group">
@@ -39,7 +39,15 @@
             0
         </span>
     </a>
-</div>
+</nav>
+            <div class="nav-toggle ml-4 md:hidden">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden">
+                <a href="products.html">Shop</a>
+                <a href="index.html">Home</a>
+                <a href="checkout.html">Checkout</a>
+            </div>
         </div>
     </nav>
 

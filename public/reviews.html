@@ -26,12 +26,20 @@
     <nav class="bg-white shadow-md p-4 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html" class="text-2xl font-serif font-bold text-coffee-dark">TechSips</a>
-            <div class="flex items-center gap-6">
+            <nav class="desktop-nav flex items-center gap-6">
                 <a href="products.html" class="hover:text-coffee-medium transition font-semibold">Shop</a>
                 <a href="checkout.html" class="relative group">
                     <i class="fa-solid fa-cart-shopping text-xl"></i>
                     <span id="cart-count" class="absolute -top-2 -right-2 bg-coffee-medium text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
                 </a>
+            </nav>
+            <div class="nav-toggle ml-4 md:hidden">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden">
+                <a href="products.html">Shop</a>
+                <a href="index.html">Home</a>
+                <a href="checkout.html">Checkout</a>
             </div>
         </div>
     </nav>
@@ -41,6 +49,16 @@
             <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">Community Feedback</h1>
             <p class="text-gray-600 max-w-2xl mx-auto">See what our fellow coffee lovers are saying about their daily brew.</p>
         </div>
+    <script>
+        // toggle mobile menu for the reviews page
+        document.addEventListener('DOMContentLoaded', () => {
+            const navToggle = document.querySelector('.nav-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (navToggle && mobileMenu) {
+                navToggle.addEventListener('click', () => mobileMenu.classList.toggle('active'));
+            }
+        });
+    </script>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
             

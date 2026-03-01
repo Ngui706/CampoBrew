@@ -4,6 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchFeaturedProducts();
     fetchActiveAds();
     updateCartUI();
+
+    // mobile menu toggle
+    const navToggle = document.querySelector('.nav-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (navToggle && mobileMenu) {
+        navToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
+    }
 });
 
 // --- 1. FETCH & RENDER PRODUCTS ---

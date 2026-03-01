@@ -50,7 +50,8 @@
                     </a>
                 </div>
                 
-                <nav class="hidden md:flex space-x-8">
+                <!-- desktop navigation -->
+                <nav class="desktop-nav hidden md:flex space-x-8">
                     <a href="index.html" class="text-coffee-medium font-medium">Home</a>
                     <a href="about.html" class="text-gray-600 hover:text-coffee-medium transition">About</a>
                     <a href="products.html" class="text-gray-600 hover:text-coffee-medium transition">Shop</a>
@@ -58,6 +59,19 @@
                     <a href="reviews.html" class="hover:text-coffee-medium transition">Reviews</a>
                     <a href="contact.html" class="text-gray-600 hover:text-coffee-medium transition">Contact</a>
                 </nav>
+
+                <!-- mobile toggle & menu -->
+                <div class="nav-toggle ml-4 md:hidden">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+                <div id="mobile-menu" class="hidden md:hidden">
+                    <a href="index.html">Home</a>
+                    <a href="about.html">About</a>
+                    <a href="products.html">Shop</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="reviews.html">Reviews</a>
+                    <a href="contact.html">Contact</a>
+                </div>
 
                <div class="flex items-center gap-6">
     <a href="products.html" class="hover:text-coffee-medium border-b-2 border-coffee-medium">Shop</a>
