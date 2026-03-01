@@ -40,7 +40,7 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       "default-src": ["'self'"], // Allow resources from your own domain
-      "script-src": ["'self'", "https://cdn.tailwindcss.com", "https://cdnjs.cloudflare.com"], // Allow your UI libraries
+      "script-src": ["'self'", "https://cdnjs.cloudflare.com"], // Allow your UI libraries
       "img-src": ["'self'", "data:", "https://*"], // Allow images from yourself and external links
       "connect-src": ["'self'", "https://campobrew.onrender.com"] // Allow API calls to your backend
     },
