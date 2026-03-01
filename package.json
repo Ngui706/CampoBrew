@@ -18,5 +18,18 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.19.0"
-  }
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ngui706/CampoBrew.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ngui706/CampoBrew/issues"
+  },
+  "homepage": "https://github.com/Ngui706/CampoBrew#readme"
 }
