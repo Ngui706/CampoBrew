@@ -5,9 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "build:css": "postcss src/styles.css -o public/style.css",
-    "watch:css": "postcss src/styles.css -o public/style.css --watch"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -20,12 +18,5 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.19.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.2.1",
-    "autoprefixer": "^10.4.27",
-    "postcss": "^8.5.6",
-    "postcss-cli": "^11.0.1",
-    "tailwindcss": "^4.2.1"
   }
 }

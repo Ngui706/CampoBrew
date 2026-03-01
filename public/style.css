@@ -1,554 +1,71 @@
-/*! tailwindcss v4.2.1 | MIT License | https://tailwindcss.com */
-@layer properties;
-.visible {
-  visibility: visible;
-}
-.absolute {
-  position: absolute;
-}
-.fixed {
-  position: fixed;
-}
-.relative {
-  position: relative;
-}
-.static {
-  position: static;
-}
-.sticky {
-  position: sticky;
-}
-.z-10 {
-  z-index: 10;
-}
-.z-50 {
-  z-index: 50;
-}
-.order-1 {
-  order: 1;
-}
-.order-2 {
-  order: 2;
-}
-.col-span-2 {
-  grid-column: span 2 / span 2;
-}
-.col-span-full {
-  grid-column: 1 / -1;
-}
-.container {
-  width: 100%;
-}
-.mx-auto {
-  margin-inline: auto;
-}
-.mt-auto {
-  margin-top: auto;
-}
-.line-clamp-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-.line-clamp-4 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-}
-.block {
-  display: block;
-}
-.flex {
-  display: flex;
-}
-.grid {
-  display: grid;
-}
-.hidden {
-  display: none;
-}
-.inline-block {
-  display: inline-block;
-}
-.table {
-  display: table;
-}
-.h-\[80vh\] {
-  height: 80vh;
-}
-.h-full {
-  height: 100%;
-}
-.max-h-\[400px\] {
-  max-height: 400px;
-}
-.min-h-screen {
-  min-height: 100vh;
-}
-.w-full {
-  width: 100%;
-}
-.flex-1 {
-  flex: 1;
-}
-.flex-shrink-0 {
-  flex-shrink: 0;
-}
-.flex-grow {
-  flex-grow: 1;
-}
-.border-collapse {
-  border-collapse: collapse;
-}
-.transform {
-  transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
-}
-.cursor-not-allowed {
-  cursor: not-allowed;
-}
-.grid-cols-1 {
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-}
-.grid-cols-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.flex-col {
-  flex-direction: column;
-}
-.flex-wrap {
-  flex-wrap: wrap;
-}
-.items-center {
-  align-items: center;
-}
-.items-start {
-  align-items: flex-start;
-}
-.justify-between {
-  justify-content: space-between;
-}
-.justify-center {
-  justify-content: center;
-}
-.justify-end {
-  justify-content: flex-end;
-}
-.divide-y {
-  :where(& > :not(:last-child)) {
-    --tw-divide-y-reverse: 0;
-    border-bottom-style: var(--tw-border-style);
-    border-top-style: var(--tw-border-style);
-    border-top-width: calc(1px * var(--tw-divide-y-reverse));
-    border-bottom-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
-  }
-}
-.overflow-hidden {
-  overflow: hidden;
-}
-.overflow-y-auto {
-  overflow-y: auto;
-}
-.rounded-full {
-  border-radius: calc(infinity * 1px);
-}
-.border {
-  border-style: var(--tw-border-style);
-  border-width: 1px;
-}
-.border-2 {
-  border-style: var(--tw-border-style);
-  border-width: 2px;
-}
-.border-t {
-  border-top-style: var(--tw-border-style);
-  border-top-width: 1px;
-}
-.border-t-8 {
-  border-top-style: var(--tw-border-style);
-  border-top-width: 8px;
-}
-.border-b {
-  border-bottom-style: var(--tw-border-style);
-  border-bottom-width: 1px;
-}
-.border-b-2 {
-  border-bottom-style: var(--tw-border-style);
-  border-bottom-width: 2px;
-}
-.border-l-4 {
-  border-left-style: var(--tw-border-style);
-  border-left-width: 4px;
-}
-.border-dashed {
-  --tw-border-style: dashed;
-  border-style: dashed;
-}
-.border-\[\#3A2618\] {
-  border-color: #3A2618;
-}
-.border-\[\#C38E70\] {
-  border-color: #C38E70;
-}
-.bg-\[\#3A2618\] {
-  background-color: #3A2618;
-}
-.bg-\[\#C38E70\] {
-  background-color: #C38E70;
-}
-.bg-\[\#F5EBE0\] {
-  background-color: #F5EBE0;
-}
-.object-cover {
-  -o-object-fit: cover;
-     object-fit: cover;
-}
-.text-center {
-  text-align: center;
-}
-.text-left {
-  text-align: left;
-}
-.text-right {
-  text-align: right;
-}
-.font-\[\'Playfair_Display\'\] {
-  font-family: 'Playfair Display';
-}
-.font-\[\'Poppins\'\] {
-  font-family: 'Poppins';
-}
-.text-\[10px\] {
-  font-size: 10px;
-}
-.whitespace-pre-wrap {
-  white-space: pre-wrap;
-}
-.text-\[\#3A2618\] {
-  color: #3A2618;
-}
-.text-\[\#C38E70\] {
-  color: #C38E70;
-}
-.uppercase {
-  text-transform: uppercase;
-}
-.italic {
-  font-style: italic;
-}
-.underline {
-  text-decoration-line: underline;
-}
-.antialiased {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-.opacity-40 {
-  opacity: 40%;
-}
-.opacity-50 {
-  opacity: 50%;
-}
-.transition {
-  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
-  transition-timing-function: var(--tw-ease, ease);
-  transition-duration: var(--tw-duration, 0s);
-}
-.transition-all {
-  transition-property: all;
-  transition-timing-function: var(--tw-ease, ease);
-  transition-duration: var(--tw-duration, 0s);
-}
-.transition-colors {
-  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
-  transition-timing-function: var(--tw-ease, ease);
-  transition-duration: var(--tw-duration, 0s);
-}
-.duration-200 {
-  --tw-duration: 200ms;
-  transition-duration: 200ms;
-}
-.duration-300 {
-  --tw-duration: 300ms;
-  transition-duration: 300ms;
-}
-.duration-500 {
-  --tw-duration: 500ms;
-  transition-duration: 500ms;
-}
-.outline-none {
-  --tw-outline-style: none;
-  outline-style: none;
-}
-.group-hover\:scale-110 {
-  &:is(:where(.group):hover *) {
-    @media (hover: hover) {
-      --tw-scale-x: 110%;
-      --tw-scale-y: 110%;
-      --tw-scale-z: 110%;
-      scale: var(--tw-scale-x) var(--tw-scale-y);
-    }
-  }
-}
-.hover\:scale-105 {
-  &:hover {
-    @media (hover: hover) {
-      --tw-scale-x: 105%;
-      --tw-scale-y: 105%;
-      --tw-scale-z: 105%;
-      scale: var(--tw-scale-x) var(--tw-scale-y);
-    }
-  }
-}
-.hover\:bg-\[\#3A2618\] {
-  &:hover {
-    @media (hover: hover) {
-      background-color: #3A2618;
-    }
-  }
-}
-.hover\:bg-\[\#C38E70\] {
-  &:hover {
-    @media (hover: hover) {
-      background-color: #C38E70;
-    }
-  }
-}
-.hover\:underline {
-  &:hover {
-    @media (hover: hover) {
-      text-decoration-line: underline;
-    }
-  }
-}
-.focus\:ring-2 {
-  &:focus {
-    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
-}
-.focus\:ring-\[\#C38E70\] {
-  &:focus {
-    --tw-ring-color: #C38E70;
-  }
-}
-.focus\:outline-none {
-  &:focus {
-    --tw-outline-style: none;
-    outline-style: none;
-  }
-}
-.active\:scale-95 {
-  &:active {
-    --tw-scale-x: 95%;
-    --tw-scale-y: 95%;
-    --tw-scale-z: 95%;
-    scale: var(--tw-scale-x) var(--tw-scale-y);
-  }
-}
+/* 1. Mobile Menu Logic */
 #mobile-menu {
-  display: none;
-  transition: all 0.3s ease-in-out;
+    display: none; /* Hidden by default */
+    transition: all 0.3s ease-in-out;
 }
+
 #mobile-menu.active {
-  display: block;
-  animation: slideDown 0.4s ease forwards;
+    display: block;
+    animation: slideDown 0.4s ease forwards;
 }
+
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
+
+/* 2. Responsive Grid System (Manual fallback for Tailwind) */
 .product-grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 1fr;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr; /* Mobile: 1 column */
 }
+
 @media (min-width: 640px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (min-width: 1024px) {
-  .product-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 0.75rem;
-}
-@media (max-width: 768px) {
-  .checkout-layout {
-    flex-direction: column;
-  }
-  .sidebar-sticky {
-    position: static;
-    margin-top: 2rem;
-  }
-}
-button, a {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#cart-count {
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.cart-bounce {
-  transform: scale(1.2);
-}
-@property --tw-rotate-x {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-rotate-y {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-rotate-z {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-skew-x {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-skew-y {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-divide-y-reverse {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0;
-}
-@property --tw-border-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
-}
-@property --tw-duration {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-scale-x {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
-}
-@property --tw-scale-y {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
-}
-@property --tw-scale-z {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
-}
-@property --tw-shadow {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0 0 #0000;
-}
-@property --tw-shadow-color {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-shadow-alpha {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 100%;
-}
-@property --tw-inset-shadow {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0 0 #0000;
-}
-@property --tw-inset-shadow-color {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-inset-shadow-alpha {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 100%;
-}
-@property --tw-ring-color {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-ring-shadow {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0 0 #0000;
-}
-@property --tw-inset-ring-color {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-inset-ring-shadow {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0 0 #0000;
-}
-@property --tw-ring-inset {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-ring-offset-width {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-@property --tw-ring-offset-color {
-  syntax: "*";
-  inherits: false;
-  initial-value: #fff;
-}
-@property --tw-ring-offset-shadow {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0 0 #0000;
-}
-@layer properties {
-  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
-    *, ::before, ::after, ::backdrop {
-      --tw-rotate-x: initial;
-      --tw-rotate-y: initial;
-      --tw-rotate-z: initial;
-      --tw-skew-x: initial;
-      --tw-skew-y: initial;
-      --tw-divide-y-reverse: 0;
-      --tw-border-style: solid;
-      --tw-duration: initial;
-      --tw-scale-x: 1;
-      --tw-scale-y: 1;
-      --tw-scale-z: 1;
-      --tw-shadow: 0 0 #0000;
-      --tw-shadow-color: initial;
-      --tw-shadow-alpha: 100%;
-      --tw-inset-shadow: 0 0 #0000;
-      --tw-inset-shadow-color: initial;
-      --tw-inset-shadow-alpha: 100%;
-      --tw-ring-color: initial;
-      --tw-ring-shadow: 0 0 #0000;
-      --tw-inset-ring-color: initial;
-      --tw-inset-ring-shadow: 0 0 #0000;
-      --tw-ring-inset: initial;
-      --tw-ring-offset-width: 0px;
-      --tw-ring-offset-color: #fff;
-      --tw-ring-offset-shadow: 0 0 #0000;
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr); /* Tablet: 2 columns */
     }
-  }
+}
+
+@media (min-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr); /* Desktop: 3 columns */
+    }
+}
+
+/* 3. Admin Table Responsiveness */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Allows horizontal swipe on small screens */
+    -webkit-overflow-scrolling: touch;
+    border-radius: 0.75rem;
+}
+
+/* 4. Checkout Form Stacking */
+@media (max-width: 768px) {
+    .checkout-layout {
+        flex-direction: column;
+    }
+    
+    .sidebar-sticky {
+        position: static; /* Summary follows form on mobile */
+        margin-top: 2rem;
+    }
+}
+
+/* 5. Utility for Touch Devices */
+button, a {
+    min-height: 44px; /* Apple/Google standard for thumb-taps */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Makes the cart count "pop" slightly when it changes */
+#cart-count {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cart-bounce {
+    transform: scale(1.2);
 }
