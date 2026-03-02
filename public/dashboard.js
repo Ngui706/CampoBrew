@@ -408,7 +408,7 @@ function renderForm(data = null) {
             <div class="col-span-2" id="img-preview-container">
                 <label class="text-xs font-bold">Image URL</label>
                 <input id="f-img" value="${data?.image_url || ''}" class="w-full border p-2 rounded">
-                ${data?.image_url ? `<img id="f-preview" src="${data.image_url}" class="mt-2 w-full h-32 object-cover rounded" />` : '<img id="f-preview" class="mt-2 w-full h-32 object-cover rounded hidden" />'}
+                ${data?.image_url ? `<img id="f-preview" src="${data.image_url}" class="mt-2 w-full h-24 object-cover rounded" />` : '<img id="f-preview" class="mt-2 w-full h-24 object-cover rounded hidden" />'}
             </div>
             <div><label class="text-xs font-bold">Start Date</label><input id="f-start" type="date" value="${data?.start_date ? data.start_date.slice(0,10) : ''}" class="w-full border p-2 rounded"></div>
             <div><label class="text-xs font-bold">End Date</label><input id="f-end" type="date" value="${data?.end_date ? data.end_date.slice(0,10) : ''}" class="w-full border p-2 rounded"></div>
