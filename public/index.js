@@ -62,15 +62,42 @@ async function fetchFeaturedProducts() {
 
 // --- 2. FETCH & RENDER PROMOTIONS (ADS) ---
 async function fetchActiveAds() {
-    const banner = document.getElementById('promo-banner');
+    const container = document.getElementById('ads-container');
     try {
         const response = await fetch(`${API_URL}/ads`);
         const ads = await response.json();
 
-        if (ads.length > 0) {
-            // Display the first active ad
-            banner.innerText = `${ads[0].title}: ${ads[0].description}`;
+        if (ads.length === 0) {
+            // fallback message if no ads
+            container.innerHTML = `<div class="text-center py-2 text-sm font-medium tracking-wide text-gray-700">Free shipping on all orders over KSh 500! Use the code Tech50</div>`;
+            return;
         }
+
+        // build slides
+        container.innerHTML = '';
+        ads.forEach((ad, idx) => {
+            const slide = document.createElement('div');
+            slide.className = 'ad-slide';
+            if (idx === 0) slide.classList.add('active');
+            slide.style.backgroundImage = ad.image_url ? `url('${ad.image_url}')` : '';
+            slide.innerHTML = `
+                <div class="content max-w-xl">
+                    <h3>${ad.title}</h3>
+                    <p>${ad.description}</p>
+                </div>
+            `;
+            container.appendChild(slide);
+        });
+
+        // simple rotation
+        let currentIndex = 0;
+        setInterval(() => {
+            const slides = container.querySelectorAll('.ad-slide');
+            slides[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % slides.length;
+            slides[currentIndex].classList.add('active');
+        }, 5000);
+
     } catch (error) {
         console.log('No active ads found or error fetching ads.');
     }

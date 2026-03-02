@@ -300,6 +300,27 @@ app.post('/api/admin/ads', verifyAdmin, async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// Admin: Get a single ad (for editing)
+app.get('/api/admin/ads/:id', verifyAdmin, async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM ads WHERE id = $1', [req.params.id]);
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Ad not found' });
+        res.json(result.rows[0]);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Admin: Update an existing ad
+app.put('/api/admin/ads/:id', verifyAdmin, async (req, res) => {
+    const { title, description, image_url, start_date, end_date, active } = req.body;
+    try {
+        const result = await pool.query(
+            'UPDATE ads SET title=$1, description=$2, image_url=$3, start_date=$4, end_date=$5, active=$6 WHERE id=$7 RETURNING *',
+            [title, description, image_url, start_date, end_date, active, req.params.id]
+        );
+        res.json(result.rows[0]);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // Admin: Delete an ad
 app.delete('/api/admin/ads/:id', verifyAdmin, async (req, res) => {
     try {

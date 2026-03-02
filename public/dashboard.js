@@ -11,7 +11,9 @@ document.addEventListener('DOMContentLoaded', () => switchSection('products'));
 // 1. CORE NAVIGATION
 async function switchSection(section) {
     currentView = section;
-    document.getElementById('current-title').innerText = section;
+    let titleText = section;
+    if (section === 'ads') titleText = 'Advertisements';
+    document.getElementById('current-title').innerText = titleText;
     
     // UI Resets: Hide "Add New" button for Reviews, Orders, and Analytics
     const hideAddBtn = ['reviews', 'orders', 'dashboard'].includes(section);
@@ -40,6 +42,7 @@ async function loadTable() {
     const endpointMap = {
         products: 'products',
         blogs: 'blogs',
+        ads: 'admin/ads',
         reviews: 'admin/reviews',
         orders: 'admin/orders'
     };
@@ -54,6 +57,7 @@ async function loadTable() {
         const headers = {
             products: ['Product', 'Price', 'Stock', 'Category', 'Actions'],
             blogs: ['Title', 'Author', 'Date', 'Actions'],
+            ads: ['Title', 'Start', 'End', 'Active', 'Actions'],
             reviews: ['Customer', 'Rating', 'Status', 'Actions'],
             orders: ['Order ID', 'Total', 'Date', 'Status', 'Actions']
         };
@@ -78,6 +82,21 @@ async function loadTable() {
                     <td class="px-6 py-4 font-medium text-gray-900">${item.title}</td>
                     <td class="px-6 py-4 text-gray-600">${item.author}</td>
                     <td class="px-6 py-4 text-gray-500 text-sm">${new Date(item.created_at).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 flex gap-3">
+                        <button onclick="editItem(${item.id})" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteItem(${item.id})" class="text-red-600 hover:text-red-800"><i class="fa-solid fa-trash"></i></button>
+                    </td>`;
+            } else if (currentView === 'ads') {
+                row = `
+                    <td class="px-6 py-4 font-medium text-gray-900 flex items-center gap-2">
+                        ${item.image_url ? `<img src="${item.image_url}" class="w-10 h-10 object-cover rounded">` : ''}
+                        ${item.title}
+                    </td>
+                    <td class="px-6 py-4 text-gray-600 text-sm">${item.start_date ? new Date(item.start_date).toLocaleDateString() : '-'}</td>
+                    <td class="px-6 py-4 text-gray-600 text-sm">${item.end_date ? new Date(item.end_date).toLocaleDateString() : 'N/A'}</td>
+                    <td class="px-6 py-4 text-center">
+                        ${item.active ? '<span class="text-green-600 font-bold">Yes</span>' : '<span class="text-red-500 font-bold">No</span>'}
+                    </td>
                     <td class="px-6 py-4 flex gap-3">
                         <button onclick="editItem(${item.id})" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
                         <button onclick="deleteItem(${item.id})" class="text-red-600 hover:text-red-800"><i class="fa-solid fa-trash"></i></button>
@@ -249,18 +268,32 @@ async function handleFormSubmit(e) {
     e.preventDefault();
     if (currentView === 'orders') return; // Orders are read-only
 
-    const payload = currentView === 'products' ? {
-        name: document.getElementById('f-name').value,
-        description: document.getElementById('f-desc').value,
-        price: document.getElementById('f-price').value,
-        category: document.getElementById('f-cat').value,
-        image_url: document.getElementById('f-img').value,
-        stock: 10
-    } : {
-        title: document.getElementById('f-title').value,
-        author: document.getElementById('f-author').value,
-        content: document.getElementById('f-content').value
-    };
+    let payload;
+    if (currentView === 'products') {
+        payload = {
+            name: document.getElementById('f-name').value,
+            description: document.getElementById('f-desc').value,
+            price: document.getElementById('f-price').value,
+            category: document.getElementById('f-cat').value,
+            image_url: document.getElementById('f-img').value,
+            stock: 10
+        };
+    } else if (currentView === 'blogs') {
+        payload = {
+            title: document.getElementById('f-title').value,
+            author: document.getElementById('f-author').value,
+            content: document.getElementById('f-content').value
+        };
+    } else if (currentView === 'ads') {
+        payload = {
+            title: document.getElementById('f-title').value,
+            description: document.getElementById('f-desc').value,
+            image_url: document.getElementById('f-img').value,
+            start_date: document.getElementById('f-start').value,
+            end_date: document.getElementById('f-end').value,
+            active: document.getElementById('f-active').checked
+        };
+    }
 
     const method = editingId ? 'PUT' : 'POST';
     const url = editingId ? `${API_URL}/admin/${currentView}/${editingId}` : `${API_URL}/admin/${currentView}`;
@@ -276,7 +309,11 @@ async function handleFormSubmit(e) {
 }
 
 async function editItem(id) {
-    const res = await fetch(`${API_URL}/${currentView}/${id}`);
+    // use mapping to hit admin endpoints when necessary
+    const endpoint = endpointMap[currentView] || currentView;
+    const res = await fetch(`${API_URL}/${endpoint}/${id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
     const item = await res.json();
     editingId = id;
     document.getElementById('modal-title').innerText = `Edit ${currentView.slice(0, -1)}`;
@@ -287,7 +324,8 @@ async function editItem(id) {
 
 async function deleteItem(id) {
     if (!confirm('Are you sure?')) return;
-    await fetch(`${API_URL}/admin/${currentView}/${id}`, {
+    const endpoint = endpointMap[currentView] || currentView;
+    await fetch(`${API_URL}/${endpoint}/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -358,6 +396,32 @@ function renderForm(data = null) {
             <div class="col-span-2"><label class="text-xs font-bold">Blog Title</label><input id="f-title" value="${data?.title || ''}" class="w-full border p-2 rounded"></div>
             <div><label class="text-xs font-bold">Author</label><input id="f-author" value="${data?.author || ''}" class="w-full border p-2 rounded"></div>
             <div class="col-span-2"><label class="text-xs font-bold">Content</label><textarea id="f-content" rows="5" class="w-full border p-2 rounded">${data?.content || ''}</textarea></div>`;
+    } else if (currentView === 'ads') {
+        form.innerHTML = `
+            <div class="col-span-2"><label class="text-xs font-bold">Ad Title</label><input id="f-title" value="${data?.title || ''}" class="w-full border p-2 rounded"></div>
+            <div class="col-span-2"><label class="text-xs font-bold">Description</label><textarea id="f-desc" class="w-full border p-2 rounded">${data?.description || ''}</textarea></div>
+            <div class="col-span-2" id="img-preview-container">
+                <label class="text-xs font-bold">Image URL</label>
+                <input id="f-img" value="${data?.image_url || ''}" class="w-full border p-2 rounded">
+                ${data?.image_url ? `<img id="f-preview" src="${data.image_url}" class="mt-2 w-full h-32 object-cover rounded" />` : '<img id="f-preview" class="mt-2 w-full h-32 object-cover rounded hidden" />'}
+            </div>
+            <div><label class="text-xs font-bold">Start Date</label><input id="f-start" type="date" value="${data?.start_date ? data.start_date.slice(0,10) : ''}" class="w-full border p-2 rounded"></div>
+            <div><label class="text-xs font-bold">End Date</label><input id="f-end" type="date" value="${data?.end_date ? data.end_date.slice(0,10) : ''}" class="w-full border p-2 rounded"></div>
+            <div class="col-span-2 flex items-center gap-2"><input id="f-active" type="checkbox" ${data?.active ? 'checked' : ''}><label class="text-xs font-bold">Active</label></div>`;
+        
+        // add listener to update preview
+        setTimeout(() => {
+            const imgInput = document.getElementById('f-img');
+            const preview = document.getElementById('f-preview');
+            imgInput.addEventListener('input', () => {
+                if (imgInput.value.trim()) {
+                    preview.src = imgInput.value;
+                    preview.classList.remove('hidden');
+                } else {
+                    preview.classList.add('hidden');
+                }
+            });
+        }, 0);
     }
 }
 
