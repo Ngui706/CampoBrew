@@ -89,14 +89,14 @@ async function fetchActiveAds() {
             container.appendChild(slide);
         });
 
-        // simple rotation
+        // simple rotation every 2 seconds
         let currentIndex = 0;
         setInterval(() => {
             const slides = container.querySelectorAll('.ad-slide');
             slides[currentIndex].classList.remove('active');
             currentIndex = (currentIndex + 1) % slides.length;
             slides[currentIndex].classList.add('active');
-        }, 5000);
+        }, 2000);
 
     } catch (error) {
         console.log('No active ads found or error fetching ads.');
