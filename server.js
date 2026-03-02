@@ -300,6 +300,14 @@ app.post('/api/admin/ads', verifyAdmin, async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// Admin: Get all ads (for management view)
+app.get('/api/admin/ads', verifyAdmin, async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM ads ORDER BY start_date DESC');
+        res.json(result.rows);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // Admin: Get a single ad (for editing)
 app.get('/api/admin/ads/:id', verifyAdmin, async (req, res) => {
     try {

@@ -51,6 +51,10 @@ async function loadTable() {
         const response = await fetch(`${API_URL}/${endpointMap[currentView]}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (!response.ok) {
+            const errInfo = await response.json().catch(() => ({}));
+            throw new Error(errInfo.error || `HTTP ${response.status}`);
+        }
         const data = await response.json();
 
         // Header Configuration
