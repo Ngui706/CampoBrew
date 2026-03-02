@@ -125,7 +125,8 @@ async function loadTable() {
             tableBody.innerHTML += `<tr class="hover:bg-gray-50 transition border-b border-gray-100">${row}</tr>`;
         });
     } catch (err) {
-        tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500 font-bold">Failed to load ${currentView}.</td></tr>`;
+        console.error(`Error loading ${currentView}:`, err);
+        tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500 font-bold">Failed to load ${currentView}. Please check the console or ensure the server endpoint is available.</td></tr>`;
     }
 }
 
