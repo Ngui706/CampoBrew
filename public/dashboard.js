@@ -3,6 +3,24 @@ const token = localStorage.getItem('adminToken');
 let currentView = 'products';
 let editingId = null;
 
+// Endpoint maps (LIST endpoints can be public; CRUD endpoints must be admin)
+const LIST_ENDPOINTS = {
+    products: 'products',
+    blogs: 'blogs',
+    ads: 'admin/ads',
+    reviews: 'admin/reviews',
+    orders: 'admin/orders',
+    dashboard: 'admin/analytics'
+};
+
+const CRUD_ENDPOINTS = {
+    products: 'admin/products',
+    blogs: 'admin/blogs',
+    ads: 'admin/ads',
+    reviews: 'admin/reviews',
+    orders: 'admin/orders'
+};
+
 // Security check
 if (!token) window.location.href = 'admin-login.html';
 
@@ -38,17 +56,8 @@ async function loadTable() {
     // Clear previous results
     tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-400 italic">Fetching data...</td></tr>';
 
-    // Map view to endpoint
-    const endpointMap = {
-        products: 'products',
-        blogs: 'blogs',
-        ads: 'admin/ads',
-        reviews: 'admin/reviews',
-        orders: 'admin/orders'
-    };
-
     try {
-        const response = await fetch(`${API_URL}/${endpointMap[currentView]}`, {
+        const response = await fetch(`${API_URL}/${LIST_ENDPOINTS[currentView]}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) {
@@ -134,22 +143,6 @@ async function loadTable() {
     }
 }
 
-// Add this logic to your existing loadTable() if currentView === 'reviews'
-if (currentView === 'reviews') {
-    row = `
-        <td class="px-6 py-4 font-medium text-gray-900">${item.user_name}</td>
-        <td class="px-6 py-4 text-orange-400">${'★'.repeat(item.rating)}</td>
-        <td class="px-6 py-4">
-            ${item.approved 
-                ? '<span class="text-green-600 font-bold text-xs bg-green-50 px-2 py-1 rounded">Verified</span>' 
-                : '<span class="text-orange-500 font-bold text-xs bg-orange-50 px-2 py-1 rounded">Pending</span>'}
-        </td>
-        <td class="px-6 py-4 flex gap-2">
-            ${!item.approved ? `<button onclick="approveReview(${item.id})" class="bg-green-600 text-white px-3 py-1 rounded text-[10px] font-bold">Approve</button>` : ''}
-            <button onclick="deleteItem(${item.id})" class="text-red-600"><i class="fa-solid fa-trash"></i></button>
-        </td>
-    `;
-}
 
 // Function to handle the approval click
 async function approveReview(id) {
@@ -242,31 +235,6 @@ async function viewOrderDetails(orderId) {
 }
 
 // Function to handle the actual saving of the status
-async function submitStatusUpdate(orderId) {
-    const newStatus = document.getElementById('update-status-select').value;
-    
-    try {
-        const res = await fetch(`${API_URL}/admin/orders/${orderId}/status`, {
-            method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` 
-            },
-            body: JSON.stringify({ status: newStatus })
-        });
-
-        if (res.ok) {
-            alert(`Success! Order #ORD-${orderId} is now marked as ${newStatus}`);
-            closeModal();
-            loadTable(); // Refresh the main table to show the new status badge
-        } else {
-            alert("Error updating status.");
-        }
-    } catch (err) {
-        console.error("Update failed:", err);
-        alert("Server error. Check your connection.");
-    }
-}
 
 // 4. CRUD ACTIONS
 async function handleFormSubmit(e) {
@@ -301,40 +269,91 @@ async function handleFormSubmit(e) {
     }
 
     const method = editingId ? 'PUT' : 'POST';
-    const url = editingId ? `${API_URL}/admin/${currentView}/${editingId}` : `${API_URL}/admin/${currentView}`;
+    const base = CRUD_ENDPOINTS[currentView];
+    const url = editingId ? `${API_URL}/${base}/${editingId}` : `${API_URL}/${base}`;
 
-    await fetch(url, {
-        method: method,
+    const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload)
     });
+
+    if (!res.ok) {
+        const errInfo = await res.json().catch(() => ({}));
+        alert(errInfo.error || `Failed to save ${currentView.slice(0, -1)} (HTTP ${res.status})`);
+        return;
+    }
 
     closeModal();
     loadTable();
 }
 
 async function editItem(id) {
-    // use mapping to hit admin endpoints when necessary
-    const endpoint = endpointMap[currentView] || currentView;
-    const res = await fetch(`${API_URL}/${endpoint}/${id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const item = await res.json();
-    editingId = id;
-    document.getElementById('modal-title').innerText = `Edit ${currentView.slice(0, -1)}`;
-    renderForm(item);
-    document.getElementById('save-btn').classList.remove('hidden');
-    document.getElementById('modal').classList.remove('hidden');
+    try {
+        let item;
+
+        // Products have a public single endpoint; blogs do not. Use a fallback.
+        if (currentView === 'products') {
+            const res = await fetch(`${API_URL}/products/${id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error(`Failed to fetch product: HTTP ${res.status}`);
+            item = await res.json();
+        } else if (currentView === 'blogs') {
+            const res = await fetch(`${API_URL}/blogs`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error(`Failed to fetch blogs: HTTP ${res.status}`);
+            const list = await res.json();
+            item = list.find((b) => Number(b.id) === Number(id));
+            if (!item) throw new Error('Blog not found in list');
+        } else if (currentView === 'ads') {
+            const res = await fetch(`${API_URL}/admin/ads/${id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error(`Failed to fetch ad: HTTP ${res.status}`);
+            item = await res.json();
+        } else {
+            // reviews/orders are not editable via modal
+            return;
+        }
+
+        editingId = id;
+        document.getElementById('modal-title').innerText = `Edit ${currentView.slice(0, -1)}`;
+        renderForm(item);
+        document.getElementById('save-btn').classList.remove('hidden');
+        document.getElementById('modal').classList.remove('hidden');
+    } catch (err) {
+        console.error('Edit failed:', err);
+        alert(`Failed to load ${currentView.slice(0, -1)} for editing.`);
+    }
 }
 
 async function deleteItem(id) {
     if (!confirm('Are you sure?')) return;
-    const endpoint = endpointMap[currentView] || currentView;
-    await fetch(`${API_URL}/${endpoint}/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    loadTable();
+
+    // Orders are not deletable from this UI
+    if (currentView === 'orders') return;
+
+    try {
+        const base = CRUD_ENDPOINTS[currentView];
+        if (!base) throw new Error(`No CRUD endpoint for view: ${currentView}`);
+
+        const res = await fetch(`${API_URL}/${base}/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+            const errInfo = await res.json().catch(() => ({}));
+            throw new Error(errInfo.error || `HTTP ${res.status}`);
+        }
+
+        loadTable();
+    } catch (err) {
+        console.error('Delete failed:', err);
+        alert(`Failed to delete ${currentView.slice(0, -1)}.`);
+    }
 }
 
 async function updateOrderStatus(orderId, newStatus) {
