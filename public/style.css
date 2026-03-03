@@ -94,7 +94,9 @@ img, video, iframe {
     align-items: center;
     text-align: center;
     padding: 1rem;
-    background: linear-gradient(120deg, #f5ebe0 0%, #e8d4c2 52%, #d5bdaf 100%);
+    background-image: linear-gradient(rgba(33, 23, 16, 0.62), rgba(33, 23, 16, 0.62)), url('https://i.pinimg.com/1200x/32/d5/bd/32d5bdf1de62450014185bd2bea1c2e5.jpg');
+    background-size: cover;
+    background-position: center;
     border: 1px solid rgba(58, 38, 24, 0.18);
 }
 
@@ -102,16 +104,18 @@ img, video, iframe {
     font-family: "Playfair Display", serif;
     font-size: 1.85rem;
     font-weight: 700;
-    color: #3a2618;
+    color: #ffffff;
     line-height: 1.1;
     letter-spacing: 0.02em;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
 }
 
 .ads-empty-state p {
     margin-top: 0.5rem;
-    color: #5b473a;
+    color: #f2ece7;
     font-size: 0.98rem;
     font-weight: 500;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
 }
 
 .ad-slide {
