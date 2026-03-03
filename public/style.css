@@ -86,6 +86,34 @@ img, video, iframe {
     position: relative;
 }
 
+.ads-empty-state {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(120deg, #f5ebe0 0%, #e8d4c2 52%, #d5bdaf 100%);
+    border: 1px solid rgba(58, 38, 24, 0.18);
+}
+
+.ads-empty-state h3 {
+    font-family: "Playfair Display", serif;
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: #3a2618;
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+}
+
+.ads-empty-state p {
+    margin-top: 0.5rem;
+    color: #5b473a;
+    font-size: 0.98rem;
+    font-weight: 500;
+}
+
 .ad-slide {
     position: absolute;
     inset: 0;

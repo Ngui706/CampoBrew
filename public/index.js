@@ -63,13 +63,21 @@ async function fetchFeaturedProducts() {
 // --- 2. FETCH & RENDER PROMOTIONS (ADS) ---
 async function fetchActiveAds() {
     const container = document.getElementById('ads-container');
+    const renderEmptyAdsState = () => {
+        container.innerHTML = `
+            <div class="ads-empty-state">
+                <h3>Ad Center</h3>
+                <p>Contact Techsips admin to advertise here</p>
+            </div>
+        `;
+    };
+
     try {
         const response = await fetch(`${API_URL}/ads`);
         const ads = await response.json();
 
         if (ads.length === 0) {
-            // fallback message if no ads
-            container.innerHTML = `<div class="text-center py-2 text-sm font-medium tracking-wide text-gray-700">Free shipping on all orders over KSh 500! Use the code Tech50</div>`;
+            renderEmptyAdsState();
             return;
         }
 
@@ -100,6 +108,7 @@ async function fetchActiveAds() {
 
     } catch (error) {
         console.log('No active ads found or error fetching ads.');
+        renderEmptyAdsState();
     }
 }
 
