@@ -1,8 +1,43 @@
 const API_URL = 'https://campobrew.onrender.com/api';
+const WHATSAPP_NUMBER = '254795846971';
  
         let cart = JSON.parse(localStorage.getItem('coffee_cart')) || [];
 
         document.addEventListener('DOMContentLoaded', renderOrderSummary);
+
+        function buildWhatsAppMessage(orderData, orderId) {
+            const itemsText = orderData.items.map((item, index) => {
+                return `${index + 1}. Product ID: ${item.product_id}, Qty: ${item.quantity}, Price: KSh ${item.price}`;
+            }).join('\n');
+
+            return [
+                `New TechSips Order${orderId ? ` #${orderId}` : ''}`,
+                `Customer: ${orderData.customer_name}`,
+                `Email: ${orderData.customer_email}`,
+                `Phone: ${orderData.customer_phone}`,
+                `Address: ${orderData.shipping_address}`,
+                `Total: KSh ${orderData.total_price.toFixed(2)}`,
+                'Items:',
+                itemsText
+            ].join('\n');
+        }
+
+        function sendOrderToWhatsApp(orderData, orderId) {
+            const message = buildWhatsAppMessage(orderData, orderId);
+            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+            const whatsappLink = document.getElementById('whatsapp-link');
+
+            if (whatsappLink) {
+                whatsappLink.href = whatsappUrl;
+                whatsappLink.classList.remove('hidden');
+            }
+
+            const newTab = window.open(whatsappUrl, '_blank');
+            if (!newTab) {
+                const whatsappStatus = document.getElementById('whatsapp-status');
+                if (whatsappStatus) whatsappStatus.classList.remove('hidden');
+            }
+        }
 
         function renderOrderSummary() {
             const list = document.getElementById('cart-items-list');
@@ -99,12 +134,14 @@ const API_URL = 'https://campobrew.onrender.com/api';
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(orderData)
                 });
+                const data = await response.json().catch(() => ({}));
 
                 if (response.ok) {
                     localStorage.removeItem('coffee_cart');
                     document.getElementById('checkout-container').classList.add('hidden');
                     document.getElementById('success-screen').classList.remove('hidden');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                    sendOrderToWhatsApp(orderData, data.orderId);
                 } else {
                     throw new Error("Order submission failed");
                 }
