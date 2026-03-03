@@ -351,7 +351,32 @@ app.post('/api/contact', async (req, res) => {
 
 // Public: Submit an Order (Checkout)
 app.post('/api/orders', async (req, res) => {
-    const { user_id, items, total_price } = req.body; // items is an array of { product_id, quantity, price }
+    const {
+        user_id,
+        customer_name,
+        customer_email,
+        customer_phone,
+        shipping_address,
+        items,
+        total_price
+    } = req.body; // items is an array of { product_id, quantity, price }
+
+    const name = (customer_name || '').trim();
+    const email = (customer_email || '').trim();
+    const phone = (customer_phone || '').trim();
+    const address = (shipping_address || '').trim();
+
+    if (!name || !email || !phone || !address) {
+        return res.status(400).json({ error: 'Customer details are required (name, email, phone, address).' });
+    }
+
+    if (!Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ error: 'Order must include at least one item.' });
+    }
+
+    if (typeof total_price !== 'number' || Number.isNaN(total_price) || total_price <= 0) {
+        return res.status(400).json({ error: 'Invalid total_price.' });
+    }
     
     const client = await pool.connect(); // Use a transaction to ensure order and items save together
     try {
@@ -359,8 +384,10 @@ app.post('/api/orders', async (req, res) => {
         
         // 1. Create the Order
         const orderResult = await client.query(
-            'INSERT INTO orders (user_id, total_price) VALUES ($1, $2) RETURNING id',
-            [user_id || null, total_price]
+            `INSERT INTO orders (
+                user_id, customer_name, customer_email, customer_phone, shipping_address, total_price, status
+            ) VALUES ($1, $2, $3, $4, $5, $6, 'Pending') RETURNING id`,
+            [user_id || null, name, email, phone, address, total_price]
         );
         const orderId = orderResult.rows[0].id;
 
