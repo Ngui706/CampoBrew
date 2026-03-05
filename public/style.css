@@ -160,6 +160,52 @@ img, video, iframe {
     object-fit: cover;
 }
 
+/* 9. Hero image marquee */
+.hero-scroll-wrap {
+    position: absolute;
+    inset: 0;
+}
+
+.hero-scroll-track {
+    display: flex;
+    height: 100%;
+    width: max-content;
+    animation-name: hero-scroll-right-to-left;
+    animation-duration: 24s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-delay: 3s;
+}
+
+.hero-scroll-image {
+    width: 100vw;
+    min-width: 100vw;
+    height: 100%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.hero-scroll-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(58, 38, 24, 0.75), rgba(58, 38, 24, 0.5));
+}
+
+@keyframes hero-scroll-right-to-left {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-75%, 0, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-scroll-track {
+        animation: none;
+    }
+}
+
 .nav-toggle {
     display: none;
     cursor: pointer;
