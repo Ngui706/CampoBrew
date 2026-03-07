@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Our Coffee | TechSips</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
     <link rel="stylesheet" href="style.css">
@@ -24,15 +21,11 @@
         }
 
 
-        tailwind.config = { theme: { extend: { colors: { coffee: { light: '#F5EBE0', DEFAULT: '#D5BDAF', medium: '#C38E70', dark: '#3A2618' } }, fontFamily: { sans: ['Poppins'], serif: ['Playfair Display'] } } } }
     </script>
 </head>
 <body class="bg-coffee-light font-sans text-coffee-dark">
-<body class="bg-coffee-light text-coffee-dark font-sans flex flex-col min-h-screen">
 
     <nav class="bg-white shadow-md sticky top-0 z-50 p-4">
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md p-4 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html" class="text-2xl font-bold font-serif text-coffee-dark">
                 <i class="fa-solid fa-mug-hot text-coffee-medium mr-2"></i>TechSips
@@ -49,33 +42,11 @@
 </nav>
             <div class="nav-toggle ml-4 md:hidden">
                 <i class="fa-solid fa-bars"></i>
-            <a href="index.html" class="text-2xl font-bold font-serif text-coffee-dark">TechSips</a>
-            
-            <!-- Desktop Nav -->
-            <nav class="desktop-nav hidden md:flex space-x-8">
-                <a href="index.html" class="text-gray-600 hover:text-coffee-medium transition">Home</a>
-                <a href="products.html" class="text-coffee-medium font-medium border-b-2 border-coffee-medium">Shop</a>
-                <a href="contact.html" class="text-gray-600 hover:text-coffee-medium transition">Contact</a>
-            </nav>
-            
-            <!-- Icons -->
-            <div class="flex items-center gap-4">
-                <a href="checkout.html" class="relative text-coffee-dark hover:text-coffee-medium transition">
-                    <i class="fa-solid fa-cart-shopping text-xl"></i>
-                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">0</span>
-                </a>
-                <div class="nav-toggle md:hidden cursor-pointer">
-                    <i class="fa-solid fa-bars text-xl"></i>
-                </div>
             </div>
-
-            <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden md:hidden">
-                <a href="index.html">Home</a>
                 <a href="products.html">Shop</a>
                 <a href="index.html">Home</a>
                 <a href="checkout.html">Checkout</a>
-                <a href="contact.html">Contact</a>
             </div>
         </div>
     </nav>
@@ -83,34 +54,10 @@
     <main class="max-w-7xl mx-auto px-4 py-10">
         <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
             <h1 class="text-3xl font-serif font-bold">All Products</h1>
-    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
-        
-        <!-- Header & Search -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
-            <div>
-                <h1 class="text-3xl font-serif font-bold mb-2">Our Collection</h1>
-                <p class="text-gray-600 text-sm">Premium roasted beans delivered to your door.</p>
-            </div>
             
             <div class="flex w-full md:w-auto gap-2">
                 <input type="text" id="search-input" placeholder="Search coffee..." class="w-full md:w-64 p-3 rounded-lg border focus:ring-2 focus:ring-coffee-medium outline-none">
                 <button onclick="applyFilters()" class="bg-coffee-dark text-white px-6 py-2 rounded-lg hover:bg-coffee-medium transition">Search</button>
-            <!-- Search & Filter Controls -->
-            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
-                <!-- Search Input -->
-                <div class="relative w-full sm:w-64">
-                    <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="search-input" placeholder="Search coffee..." 
-                           class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-coffee-medium outline-none shadow-sm">
-                </div>
-                
-                <!-- Category Buttons -->
-                <div class="flex gap-2 overflow-x-auto pb-2 sm:pb-0 w-full sm:w-auto">
-                    <button onclick="filterByCategory('all')" class="cat-btn bg-coffee-dark text-white px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition shadow-sm">All</button>
-                    <button onclick="filterByCategory('Dark Roast')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap hover:bg-gray-50 transition border border-gray-100">Dark Roast</button>
-                    <button onclick="filterByCategory('Medium Roast')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap hover:bg-gray-50 transition border border-gray-100">Medium</button>
-                    <button onclick="filterByCategory('Light Roast')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap hover:bg-gray-50 transition border border-gray-100">Light</button>
-                </div>
             </div>
         </div>
 
@@ -131,25 +78,15 @@
                     <p class="text-sm font-medium leading-relaxed italic">"The best coffee is the one you enjoy drinking."</p>
                 </div>
             </aside>
-        <!-- Product Grid -->
-        <div id="product-grid" class="product-grid">
-            <div class="col-span-full text-center py-20">
-                <i class="fa-solid fa-spinner animate-spin text-4xl text-coffee-medium mb-4"></i>
-                <p class="text-gray-500">Brewing your selection...</p>
-            </div>
-        </div>
 
             <div id="product-grid" class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 </div>
         </div>
     </main>
 
-    <!-- WhatsApp Float -->
     <a href="https://wa.me/254795846971" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
         <i class="fab fa-whatsapp"></i>
     </a>
     <script src="product.js"></script>    
-
-    <script src="product.js"></script>
 </body>
 </html>
