@@ -1,4 +1,4 @@
-const API_URL = '/api';
+const API_URL = 'https://campo-brew.vercel.app/api';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const grid = document.getElementById('blog-grid');

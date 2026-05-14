@@ -1,4 +1,4 @@
- const API_URL = '/api';
+ const API_URL = 'https://campo-brew.vercel.app/api';
 const token = localStorage.getItem('adminToken');
 let currentView = 'products';
 let editingId = null;

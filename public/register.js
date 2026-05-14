@@ -1,4 +1,4 @@
-const API_URL = '/api';
+const API_URL = 'https://campo-brew.vercel.app/api';
 
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
