@@ -1,4 +1,4 @@
- const API_URL = 'https://campo-brew.vercel.app/api';
+ const API_URL = 'https://campobrew.onrender.com/api';
 
         // Load only approved reviews
         async function loadApprovedReviews() {

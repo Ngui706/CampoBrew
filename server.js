@@ -66,7 +66,7 @@ app.use(
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.tailwindcss.com', 'https://cdnjs.cloudflare.com'],
       imgSrc: ["'self'", 'data:', 'https://*'],
-      connectSrc: ["'self'", 'https://campobrew.onrender.com', 'https://techsips-brew.onrender.com'],
+      connectSrc: ["'self'", 'https://campobrew.onrender.com', 'https://techsips-brew.onrender.com', 'https://campo-brew.vercel.app'],
       manifestSrc: ["'self'"],
       workerSrc: ["'self'"],
     },
