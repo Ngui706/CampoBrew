@@ -63,9 +63,11 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", 'https://cdn.tailwindcss.com', 'https://cdnjs.cloudflare.com'],
+      scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.tailwindcss.com', 'https://cdnjs.cloudflare.com'],
       imgSrc: ["'self'", 'data:', 'https://*'],
       connectSrc: ["'self'", 'https://campobrew.onrender.com', 'https://techsips-brew.onrender.com'],
+      manifestSrc: ["'self'"],
+      workerSrc: ["'self'"],
     },
   })
 );
@@ -200,17 +202,19 @@ app.post('/api/admin/login', async (req, res) => {
 });
 
 app.get('/api/products', async (req, res) => {
-  const { category, search } = req.query;
+  const { category, search, featured } = req.query;
 
   try {
     const { data, error } = await runPublicRead((client) => {
       let query = client
         .from('products')
         .select('*')
+        .order('featured', { ascending: false })
         .order('created_at', { ascending: false });
 
       if (category) query = query.eq('category', category);
       if (search) query = query.ilike('name', `%${search}%`);
+      if (featured === 'true') query = query.eq('featured', true);
 
       return query;
     });
@@ -243,12 +247,12 @@ app.get('/api/products/:id', async (req, res) => {
 });
 
 app.post('/api/admin/products', verifyAdmin, async (req, res) => {
-  const { name, description, price, category, image_url, stock } = req.body;
+  const { name, description, price, category, image_url, stock, featured } = req.body;
 
   try {
     const { data, error } = await supabaseAdmin
       .from('products')
-      .insert({ name, description, price, category, image_url, stock })
+      .insert({ name, description, price, category, image_url, stock, featured: Boolean(featured) })
       .select('*')
       .single();
 
@@ -260,12 +264,12 @@ app.post('/api/admin/products', verifyAdmin, async (req, res) => {
 });
 
 app.put('/api/admin/products/:id', verifyAdmin, async (req, res) => {
-  const { name, description, price, category, image_url, stock } = req.body;
+  const { name, description, price, category, image_url, stock, featured } = req.body;
 
   try {
     const { data, error } = await supabaseAdmin
       .from('products')
-      .update({ name, description, price, category, image_url, stock })
+      .update({ name, description, price, category, image_url, stock, featured: Boolean(featured) })
       .eq('id', req.params.id)
       .select('*')
       .maybeSingle();

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="TechSips">
+  <rect width="512" height="512" rx="112" fill="#f68b1e"/>
+  <circle cx="256" cy="256" r="182" fill="#ffffff"/>
+  <path d="M154 208h192v80a91 91 0 0 1-91 91h-10a91 91 0 0 1-91-91v-80z" fill="#3A2618"/>
+  <path d="M346 234h38a48 48 0 0 1 0 96h-38v-32h35a16 16 0 0 0 0-32h-35v-32z" fill="#3A2618"/>
+  <path d="M202 160c0-24 27-24 27-48M261 160c0-24 27-24 27-48M320 160c0-24 27-24 27-48" fill="none" stroke="#3A2618" stroke-width="22" stroke-linecap="round"/>
+</svg>

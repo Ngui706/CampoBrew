@@ -1,5 +1,5 @@
 // 1. Define your API endpoint here
-const API_URL = 'https://campobrew.onrender.com/api';
+const API_URL = '/api';
 
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     // 2. Stop the browser from refreshing the page or navigating away

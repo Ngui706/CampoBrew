@@ -1,4 +1,4 @@
- const API_URL = 'https://campobrew.onrender.com/api';
+ const API_URL = '/api';
 
         // Load only approved reviews
         async function loadApprovedReviews() {

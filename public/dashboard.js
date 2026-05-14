@@ -1,4 +1,4 @@
- const API_URL = 'https://campobrew.onrender.com/api';
+ const API_URL = '/api';
 const token = localStorage.getItem('adminToken');
 let currentView = 'products';
 let editingId = null;
@@ -68,7 +68,7 @@ async function loadTable() {
 
         // Header Configuration
         const headers = {
-            products: ['Product', 'Price', 'Stock', 'Category', 'Actions'],
+            products: ['Product', 'Price', 'Stock', 'Featured', 'Category', 'Actions'],
             blogs: ['Title', 'Author', 'Date', 'Actions'],
             ads: ['Title', 'Start', 'End', 'Active', 'Actions'],
             reviews: ['Customer', 'Rating', 'Status', 'Actions'],
@@ -85,6 +85,7 @@ async function loadTable() {
                     <td class="px-6 py-4 font-medium text-gray-900">${item.name}</td>
                     <td class="px-6 py-4 text-gray-600">KSh ${item.price}</td>
                     <td class="px-6 py-4 text-gray-600">${item.stock}</td>
+                    <td class="px-6 py-4">${item.featured ? '<span class="bg-orange-100 text-orange-700 text-xs font-bold px-2 py-1 rounded">Yes</span>' : '<span class="text-gray-400 text-xs font-semibold">No</span>'}</td>
                     <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">${item.category}</span></td>
                     <td class="px-6 py-4 flex gap-3">
                         <button onclick="editItem(${item.id})" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -249,7 +250,8 @@ async function handleFormSubmit(e) {
             price: document.getElementById('f-price').value,
             category: document.getElementById('f-cat').value,
             image_url: document.getElementById('f-img').value,
-            stock: 10
+            stock: Number(document.getElementById('f-stock').value) || 0,
+            featured: document.getElementById('f-featured').checked
         };
     } else if (currentView === 'blogs') {
         payload = {
@@ -414,6 +416,8 @@ function renderForm(data = null) {
             <div class="col-span-2"><label class="text-xs font-bold">Description</label><textarea id="f-desc" class="w-full border p-2 rounded">${data?.description || ''}</textarea></div>
             <div><label class="text-xs font-bold">Price (KSh)</label><input id="f-price" type="number" step="0.01" value="${data?.price || ''}" class="w-full border p-2 rounded"></div>
             <div><label class="text-xs font-bold">Category</label><input id="f-cat" value="${data?.category || ''}" class="w-full border p-2 rounded"></div>
+            <div><label class="text-xs font-bold">Stock</label><input id="f-stock" type="number" min="0" value="${data?.stock ?? 10}" class="w-full border p-2 rounded"></div>
+            <label class="flex items-center gap-2 mt-6 text-sm font-bold"><input id="f-featured" type="checkbox" ${data?.featured ? 'checked' : ''}> Featured product</label>
             <div class="col-span-2"><label class="text-xs font-bold">Image URL</label><input id="f-img" value="${data?.image_url || ''}" class="w-full border p-2 rounded"></div>`;
     } else if (currentView === 'blogs') {
         form.innerHTML = `

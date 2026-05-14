@@ -1,4 +1,4 @@
-const API_URL = 'https://campobrew.onrender.com/api';
+const API_URL = '/api';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const grid = document.getElementById('blog-grid');

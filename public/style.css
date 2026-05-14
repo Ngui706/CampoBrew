@@ -70,6 +70,115 @@ button, a {
     transform: scale(1.2);
 }
 
+.cat-btn {
+    width: 100%;
+    min-height: 40px;
+    padding: 0.65rem 0.75rem;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    color: #313133;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: left;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cat-btn:hover,
+.cat-btn.active {
+    background: #fff3e6;
+    color: #f68b1e;
+}
+
+.product-card {
+    min-width: 0;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.product-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
+    z-index: 1;
+}
+
+.product-image-wrap {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: #f8f8f8;
+    overflow: hidden;
+}
+
+.product-image-wrap.featured {
+    aspect-ratio: 4 / 3;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.75rem;
+    transition: transform 0.25s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.04);
+}
+
+.featured-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    background: #f68b1e;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 0.25rem 0.45rem;
+    border-radius: 0.2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
+}
+
+.product-title {
+    margin-top: 0.2rem;
+    color: #313133;
+    font-size: 0.94rem;
+    font-weight: 700;
+    line-height: 1.3;
+    min-height: 2.45rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cart-action {
+    width: 2.5rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    min-height: 2.5rem;
+    border-radius: 50%;
+    background: #f68b1e;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.cart-action:hover {
+    background: #d86f07;
+    transform: translateY(-1px);
+}
+
+.cart-action:disabled {
+    background: #d4d4d8;
+    color: #71717a;
+    cursor: not-allowed;
+    transform: none;
+}
+
 /* 6. Global responsive helpers */
 img, video, iframe {
     max-width: 100%;
