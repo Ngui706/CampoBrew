@@ -51,6 +51,7 @@ const corsOptions = {
   origin: [
     'https://campobrew.onrender.com',
     'https://techsips-brew.onrender.com',
+    'https://campo-brew.vercel.app'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
