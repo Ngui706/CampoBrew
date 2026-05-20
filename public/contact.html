@@ -59,7 +59,7 @@
                     <i class="fa-solid fa-phone text-coffee-medium text-xl mt-1"></i>
                     <div>
                         <h3 class="font-bold">Our Contacts</h3>
-                        <p class="text-gray-600 text-sm">+254 795 846 971<br>techsips93@gmail.com</p>
+                        <p class="text-gray-600 text-sm">+254 795 846 971<br>carlosmarcus050@gmail.com</p>
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row items-start gap-4">
@@ -106,30 +106,28 @@
     </main>
 
     <script>
-        document.getElementById('contact-form').addEventListener('submit', async (e) => {
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            const payload = {
-                name: document.getElementById('c-name').value,
-                email: document.getElementById('c-email').value,
-                message: document.getElementById('c-message').value
-            };
 
-            try {
-                const response = await fetch(`${API_URL}/contact`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+            const name = document.getElementById('c-name').value.trim();
+            const email = document.getElementById('c-email').value.trim();
+            const message = document.getElementById('c-message').value.trim();
+            const mailTo = 'carlosmarcus050@gmail.com';
 
-                if (response.ok) {
-                    document.getElementById('contact-form').reset();
-                    document.getElementById('form-success').classList.remove('hidden');
-                    setTimeout(() => document.getElementById('form-success').classList.add('hidden'), 5000);
-                }
-            } catch (err) {
-                alert("Failed to send message. Please try again later.");
+            if (!name || !email || !message) {
+                alert('Please fill in all fields before sending your message.');
+                return;
             }
+
+            const subject = encodeURIComponent(`TechSips contact from ${name}`);
+            const body = encodeURIComponent(
+                `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0AMessage:%0D%0A${message}`
+            );
+            const mailUrl = `mailto:${mailTo}?subject=${subject}&body=${body}`;
+
+            window.location.href = mailUrl;
+            document.getElementById('form-success').classList.remove('hidden');
+            setTimeout(() => document.getElementById('form-success').classList.add('hidden'), 5000);
         });
     </script>
 <a href="https://wa.me/254795846971" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
