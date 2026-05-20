@@ -59,6 +59,31 @@ function bindMobileMenu() {
 }
 
 async function fetchProducts() {
+    // show skeleton placeholders while fetching
+    const grid = document.getElementById('product-grid');
+    const resultCount = document.getElementById('result-count');
+    if (resultCount) resultCount.innerHTML = `<div class="h-3 w-40 rounded-full skeleton mb-1"></div>`;
+    if (grid) {
+        grid.innerHTML = Array.from({ length: 8 }).map(() => `
+            <article class="product-card bg-white group">
+                <div class="relative product-image-wrap">
+                    <div class="w-full h-48 skeleton skeleton-rect"></div>
+                </div>
+                <div class="p-3 flex flex-col min-h-[176px]">
+                    <div class="h-3 w-3/4 skeleton mb-2"></div>
+                    <div class="h-3 w-1/2 skeleton mb-4"></div>
+                    <div class="mt-auto pt-3 flex items-end justify-between gap-2">
+                        <div>
+                            <div class="h-4 w-24 skeleton"></div>
+                            <div class="h-3 w-20 skeleton mt-2"></div>
+                        </div>
+                        <div class="h-10 w-10 skeleton skeleton-circle"></div>
+                    </div>
+                </div>
+            </article>
+        `).join('');
+    }
+
     try {
         const response = await fetch(`${API_URL}/products`);
         if (!response.ok) throw new Error('Failed to fetch products');

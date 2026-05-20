@@ -379,3 +379,24 @@ img, video, iframe {
         gap: 2rem;
     }
 }
+
+/* Skeleton loading helpers */
+.skeleton {
+    background: linear-gradient(90deg, #f3f3f4 0%, #ececec 50%, #f3f3f4 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s linear infinite;
+}
+
+.skeleton-rect { border-radius: 0.5rem; }
+.skeleton-circle { border-radius: 9999px; }
+.skeleton-text { height: 0.9rem; width: 70%; border-radius: 6px; display: inline-block; }
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Accessibility: reduce motion respect */
+@media (prefers-reduced-motion: reduce) {
+    .skeleton { animation: none; background: #efefef; }
+}

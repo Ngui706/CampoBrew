@@ -53,8 +53,16 @@ async function loadTable() {
     const tableHead = document.getElementById('table-head');
     const tableBody = document.getElementById('table-body');
     
-    // Clear previous results
-    tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-400 italic">Fetching data...</td></tr>';
+    // Clear previous results and show skeleton rows
+    tableBody.innerHTML = Array.from({ length: 6 }).map(() => `
+        <tr class="border-b border-gray-100">
+            <td class="px-6 py-4"><div class="h-4 w-40 skeleton"></div></td>
+            <td class="px-6 py-4"><div class="h-4 w-24 skeleton"></div></td>
+            <td class="px-6 py-4"><div class="h-4 w-28 skeleton"></div></td>
+            <td class="px-6 py-4"><div class="h-4 w-16 skeleton"></div></td>
+            <td class="px-6 py-4"><div class="h-6 w-20 skeleton"></div></td>
+        </tr>
+    `).join('');
 
     try {
         const response = await fetch(`${API_URL}/${LIST_ENDPOINTS[currentView]}`, {
@@ -166,7 +174,23 @@ async function viewOrderDetails(orderId) {
     const saveBtn = document.getElementById('save-btn'); // The default "Save" button
     
     document.getElementById('modal-title').innerText = `Manage Order #ORD-${orderId}`;
-    form.innerHTML = `<div class="col-span-2 text-center py-10"><i class="fa-solid fa-spinner animate-spin text-2xl"></i><p>Fetching Order Data...</p></div>`;
+    form.innerHTML = `
+        <div class="col-span-2 space-y-4">
+            <div class="h-6 w-1/2 skeleton"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 bg-gray-50 rounded-xl">
+                    <div class="h-4 w-32 skeleton mb-3"></div>
+                    <div class="h-4 w-40 skeleton mb-2"></div>
+                    <div class="h-3 w-28 skeleton"></div>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-xl">
+                    <div class="h-4 w-28 skeleton mb-3"></div>
+                    <div class="h-4 w-36 skeleton mb-2"></div>
+                    <div class="h-3 w-24 skeleton"></div>
+                </div>
+            </div>
+            <div class="h-40 bg-white rounded-xl skeleton"></div>
+        </div>`;
     modal.classList.remove('hidden');
     
     // Hide the standard "Product/Blog Save" button to avoid confusion
