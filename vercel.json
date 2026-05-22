@@ -4,5 +4,11 @@
       "src": "api/[...slug].js",
       "use": "@vercel/node@2.0.0"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/tickets/send-overdue-reminders",
+      "schedule": "*/30 * * * *"
+    }
   ]
 }

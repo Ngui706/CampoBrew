@@ -10,6 +10,7 @@ const LIST_ENDPOINTS = {
     ads: 'admin/ads',
     reviews: 'admin/reviews',
     orders: 'admin/orders',
+    tickets: 'admin/tickets',
     dashboard: 'admin/analytics'
 };
 
@@ -18,7 +19,8 @@ const CRUD_ENDPOINTS = {
     blogs: 'admin/blogs',
     ads: 'admin/ads',
     reviews: 'admin/reviews',
-    orders: 'admin/orders'
+    orders: 'admin/orders',
+    tickets: 'admin/tickets'
 };
 
 // Security check
@@ -35,7 +37,15 @@ async function switchSection(section) {
     
     // UI Resets: Hide "Add New" button for Reviews, Orders, and Analytics
     const hideAddBtn = ['reviews', 'orders', 'dashboard'].includes(section);
-    document.getElementById('add-btn').classList.toggle('hidden', hideAddBtn);
+    const addBtn = document.getElementById('add-btn');
+    addBtn.classList.toggle('hidden', hideAddBtn);
+    if (section === 'tickets') {
+        addBtn.innerHTML = '<i class="fa-solid fa-envelope"></i> Send Overdue';
+        addBtn.onclick = sendOverdueTicketReminders;
+    } else {
+        addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add New';
+        addBtn.onclick = openModal;
+    }
     
     // Reset KPIs if they exist when leaving dashboard
     const existingKpis = document.getElementById('kpi-container');
@@ -80,7 +90,8 @@ async function loadTable() {
             blogs: ['Title', 'Author', 'Date', 'Actions'],
             ads: ['Title', 'Start', 'End', 'Active', 'Actions'],
             reviews: ['Customer', 'Rating', 'Status', 'Actions'],
-            orders: ['Order ID', 'Total', 'Date', 'Status', 'Actions']
+            orders: ['Order ID', 'Total', 'Date', 'Status', 'Actions'],
+            tickets: ['Ticket', 'User', 'Scheduled', 'Status', 'Reminder', 'Actions']
         };
 
         tableHead.innerHTML = `<tr>${headers[currentView].map(h => `<th class="px-6 py-4 text-sm font-bold text-gray-600 uppercase tracking-wider">${h}</th>`).join('')}</tr>`;
@@ -142,6 +153,19 @@ async function loadTable() {
                     <td class="px-6 py-4 flex gap-2">
                         <button onclick="viewOrderDetails(${item.id})" class="text-blue-600 hover:text-blue-800 text-xs font-bold underline">Details</button>
                         ${(item.status === 'Pending' || !item.status) ? `<button onclick="updateOrderStatus(${item.id}, 'Shipped')" class="bg-coffee-dark text-white px-2 py-1 rounded text-[10px]">Ship</button>` : ''}
+                    </td>`;
+            } else if (currentView === 'tickets') {
+                const scheduled = item.scheduled_for ? new Date(item.scheduled_for).toLocaleString() : '-';
+                const reminder = item.reschedule_email_sent_at ? new Date(item.reschedule_email_sent_at).toLocaleString() : 'Not sent';
+                const statusColor = item.status === 'Resolved' ? 'text-green-700 bg-green-100' : item.status === 'Cancelled' ? 'text-red-700 bg-red-100' : 'text-orange-700 bg-orange-100';
+                row = `
+                    <td class="px-6 py-4 font-bold text-coffee-dark">#TKT-${item.id}<div class="text-[10px] font-normal text-gray-400">${item.subject || 'Support ticket'}</div></td>
+                    <td class="px-6 py-4 text-gray-700">${item.user_name}<div class="text-[10px] text-gray-500">${item.user_email}</div></td>
+                    <td class="px-6 py-4 text-gray-500 text-xs">${scheduled}</td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-bold rounded ${statusColor}">${item.status || 'Scheduled'}</span></td>
+                    <td class="px-6 py-4 text-gray-500 text-xs">${reminder}</td>
+                    <td class="px-6 py-4 flex gap-2">
+                        <button onclick="viewTicketDetails(${item.id})" class="text-blue-600 hover:text-blue-800 text-xs font-bold underline">Manage</button>
                     </td>`;
             }
             tableBody.innerHTML += `<tr class="hover:bg-gray-50 transition border-b border-gray-100">${row}</tr>`;
@@ -389,6 +413,111 @@ async function updateOrderStatus(orderId, newStatus) {
         body: JSON.stringify({ status: newStatus })
     });
     loadTable();
+}
+
+function toDatetimeLocal(value) {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return offsetDate.toISOString().slice(0, 16);
+}
+
+async function viewTicketDetails(ticketId) {
+    editingId = ticketId;
+    const modal = document.getElementById('modal');
+    const form = document.getElementById('modal-form');
+    const saveBtn = document.getElementById('save-btn');
+
+    document.getElementById('modal-title').innerText = `Manage Ticket #TKT-${ticketId}`;
+    form.innerHTML = '<div class="col-span-2 h-40 skeleton rounded-xl"></div>';
+    if (saveBtn) saveBtn.classList.add('hidden');
+    modal.classList.remove('hidden');
+
+    try {
+        const response = await fetch(`${API_URL}/admin/tickets/${ticketId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const ticket = await response.json();
+
+        form.innerHTML = `
+            <div class="col-span-2 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                    <div>
+                        <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">User</h4>
+                        <p class="text-sm font-bold text-coffee-dark">${ticket.user_name}</p>
+                        <p class="text-xs text-gray-600">${ticket.user_email}</p>
+                    </div>
+                    <div>
+                        <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Ticket</h4>
+                        <p class="text-sm font-bold text-coffee-dark">${ticket.subject}</p>
+                        <p class="text-xs text-gray-600">${ticket.description || 'No description provided.'}</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border-2 border-dashed border-coffee-medium/30 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Status</label>
+                        <select id="ticket-status-select" class="w-full p-2 border rounded-lg text-sm bg-white outline-none focus:ring-2 focus:ring-coffee-medium">
+                            ${['Open', 'Scheduled', 'In Progress', 'Resolved', 'Cancelled'].map(status => `<option value="${status}" ${ticket.status === status ? 'selected' : ''}>${status}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Scheduled Time</label>
+                        <input id="ticket-scheduled-for" type="datetime-local" value="${toDatetimeLocal(ticket.scheduled_for)}" class="w-full p-2 border rounded-lg text-sm bg-white outline-none focus:ring-2 focus:ring-coffee-medium">
+                    </div>
+                    <button onclick="submitTicketUpdate(${ticket.id})" class="bg-coffee-dark text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-coffee-medium transition shadow-md">
+                        Save Ticket
+                    </button>
+                </div>
+            </div>`;
+    } catch (err) {
+        form.innerHTML = `<p class="col-span-2 text-red-500 text-center">Failed to load ticket #TKT-${ticketId}.</p>`;
+    }
+}
+
+async function submitTicketUpdate(ticketId) {
+    const status = document.getElementById('ticket-status-select').value;
+    const scheduledFor = document.getElementById('ticket-scheduled-for').value;
+
+    try {
+        const response = await fetch(`${API_URL}/admin/tickets/${ticketId}`, {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` 
+            },
+            body: JSON.stringify({ status, scheduled_for: scheduledFor })
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+
+        alert(`Ticket #TKT-${ticketId} updated successfully.`);
+        closeModal();
+        loadTable();
+    } catch (err) {
+        alert(`Failed to update ticket: ${err.message}`);
+    }
+}
+
+async function sendOverdueTicketReminders() {
+    if (!confirm('Send reschedule emails for unresolved tickets past their scheduled time?')) return;
+
+    try {
+        const response = await fetch(`${API_URL}/admin/tickets/send-overdue-reminders`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+
+        alert(`Reminder check complete. Sent: ${data.sent}, Failed: ${data.failed}.`);
+        loadTable();
+    } catch (err) {
+        alert(`Failed to send reminders: ${err.message}`);
+    }
 }
 
 // 5. ANALYTICS

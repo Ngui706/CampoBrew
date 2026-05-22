@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const helmet = require('helmet');
+const nodemailer = require('nodemailer');
 const { createClient } = require('@supabase/supabase-js');
 
 const REQUIRED_ENV = [
@@ -42,6 +43,8 @@ const supabaseAdmin = createClient(
 );
 
 const ORDER_STATUSES = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+const TICKET_STATUSES = ['Open', 'Scheduled', 'In Progress', 'Resolved', 'Cancelled'];
+const UNRESOLVED_TICKET_STATUSES = ['Open', 'Scheduled', 'In Progress'];
 
 const app = express();
 app.use(express.json());
@@ -76,6 +79,142 @@ app.use(
 function sendServerError(res, error, fallback = 'Server error') {
   console.error(error);
   return res.status(500).json({ error: error?.message || fallback });
+}
+
+function getBaseUrl() {
+  return (process.env.APP_BASE_URL || process.env.PUBLIC_APP_URL || '').replace(/\/$/, '');
+}
+
+function getMailTransporter() {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    return null;
+  }
+
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+}
+
+async function sendEmail({ to, subject, text, html }) {
+  const transporter = getMailTransporter();
+  if (!transporter) {
+    throw new Error('Email is not configured. Set SMTP_HOST, SMTP_USER, SMTP_PASS, and SMTP_FROM.');
+  }
+
+  return transporter.sendMail({
+    from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    to,
+    subject,
+    text,
+    html,
+  });
+}
+
+function formatSchedule(value) {
+  if (!value) return 'the scheduled time';
+  return new Date(value).toLocaleString('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: process.env.APP_TIMEZONE || 'Africa/Nairobi',
+  });
+}
+
+function escapeHtml(value = '') {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function buildRescheduleMessage(ticket) {
+  const baseUrl = getBaseUrl();
+  const rescheduleUrl = baseUrl
+    ? `${baseUrl}/contact.html?ticket=${encodeURIComponent(ticket.id)}`
+    : null;
+  const scheduledTime = formatSchedule(ticket.scheduled_for);
+  const subject = `Please reschedule ticket #${ticket.id}`;
+  const displayName = ticket.user_name || 'there';
+  const displaySubject = ticket.subject ? ` (${ticket.subject})` : '';
+  const textLines = [
+    `Hello ${displayName},`,
+    '',
+    `Ticket #${ticket.id}${displaySubject} was scheduled for ${scheduledTime}, but it has not been resolved yet.`,
+    'Please reply with another convenient time so we can reschedule it.',
+  ];
+
+  if (rescheduleUrl) {
+    textLines.push('', `You can also contact us here: ${rescheduleUrl}`);
+  }
+
+  textLines.push('', 'Thank you,', 'TechSips Support');
+
+  const html = `
+    <p>Hello ${escapeHtml(displayName)},</p>
+    <p>Ticket <strong>#${escapeHtml(ticket.id)}</strong>${ticket.subject ? ` (${escapeHtml(ticket.subject)})` : ''} was scheduled for <strong>${escapeHtml(scheduledTime)}</strong>, but it has not been resolved yet.</p>
+    <p>Please reply with another convenient time so we can reschedule it.</p>
+    ${rescheduleUrl ? `<p><a href="${rescheduleUrl}">Contact us to reschedule</a></p>` : ''}
+    <p>Thank you,<br>TechSips Support</p>
+  `;
+
+  return { subject, text: textLines.join('\n'), html };
+}
+
+async function sendOverdueTicketReminders() {
+  const nowIso = new Date().toISOString();
+  const { data: tickets, error } = await supabaseAdmin
+    .from('tickets')
+    .select('*')
+    .lte('scheduled_for', nowIso)
+    .in('status', UNRESOLVED_TICKET_STATUSES)
+    .is('reschedule_email_sent_at', null);
+
+  if (error) throw error;
+
+  const results = [];
+  for (const ticket of tickets || []) {
+    try {
+      const message = buildRescheduleMessage(ticket);
+      await sendEmail({
+        to: ticket.user_email,
+        subject: message.subject,
+        text: message.text,
+        html: message.html,
+      });
+
+      const sentAt = new Date().toISOString();
+      const { error: updateError } = await supabaseAdmin
+        .from('tickets')
+        .update({ reschedule_email_sent_at: sentAt })
+        .eq('id', ticket.id);
+
+      if (updateError) throw updateError;
+      results.push({ ticketId: ticket.id, email: ticket.user_email, status: 'sent' });
+    } catch (error) {
+      console.error(`Failed to send reschedule email for ticket ${ticket.id}`, error);
+      results.push({
+        ticketId: ticket.id,
+        email: ticket.user_email,
+        status: 'failed',
+        error: error.message,
+      });
+    }
+  }
+
+  return {
+    checkedAt: nowIso,
+    totalOverdue: (tickets || []).length,
+    sent: results.filter((item) => item.status === 'sent').length,
+    failed: results.filter((item) => item.status === 'failed').length,
+    results,
+  };
 }
 
 async function runPublicRead(builderFactory) {
@@ -598,6 +737,190 @@ app.post('/api/contact', async (req, res) => {
   console.log(`New contact message from ${name} (${email}): ${message}`);
   res.json({ success: true, message: 'Your message has been received!' });
 });
+
+app.post('/api/tickets', async (req, res) => {
+  const { user_name, user_email, subject, description, scheduled_for } = req.body;
+  const name = (user_name || '').trim();
+  const email = (user_email || '').trim();
+  const ticketSubject = (subject || '').trim();
+  const details = (description || '').trim();
+
+  if (!name || !email || !ticketSubject || !scheduled_for) {
+    return res.status(400).json({
+      error: 'user_name, user_email, subject, and scheduled_for are required.',
+    });
+  }
+
+  const scheduledAt = new Date(scheduled_for);
+  if (Number.isNaN(scheduledAt.getTime())) {
+    return res.status(400).json({ error: 'scheduled_for must be a valid date/time.' });
+  }
+
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('tickets')
+      .insert({
+        user_name: name,
+        user_email: email,
+        subject: ticketSubject,
+        description: details,
+        scheduled_for: scheduledAt.toISOString(),
+        status: 'Scheduled',
+      })
+      .select('*')
+      .single();
+
+    if (error) return sendServerError(res, error);
+    res.status(201).json({ message: 'Ticket created successfully.', ticket: data });
+  } catch (error) {
+    sendServerError(res, error);
+  }
+});
+
+app.put('/api/tickets/:id/reschedule', async (req, res) => {
+  const { user_email, scheduled_for } = req.body;
+  const email = (user_email || '').trim();
+  const scheduledAt = new Date(scheduled_for);
+
+  if (!email || !scheduled_for || Number.isNaN(scheduledAt.getTime())) {
+    return res.status(400).json({
+      error: 'user_email and a valid scheduled_for date/time are required.',
+    });
+  }
+
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('tickets')
+      .update({
+        scheduled_for: scheduledAt.toISOString(),
+        status: 'Scheduled',
+        reschedule_email_sent_at: null,
+        rescheduled_at: new Date().toISOString(),
+      })
+      .eq('id', req.params.id)
+      .eq('user_email', email)
+      .select('*')
+      .maybeSingle();
+
+    if (error && !isMissingRowError(error)) return sendServerError(res, error);
+    if (!data) return res.status(404).json({ error: 'Ticket not found for that email.' });
+
+    res.json({ message: 'Ticket rescheduled successfully.', ticket: data });
+  } catch (error) {
+    sendServerError(res, error);
+  }
+});
+
+app.get('/api/admin/tickets', verifyAdmin, async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('tickets')
+      .select('*')
+      .order('scheduled_for', { ascending: true, nullsFirst: false })
+      .order('created_at', { ascending: false });
+
+    if (error) return sendServerError(res, error);
+    res.json(data || []);
+  } catch (error) {
+    sendServerError(res, error);
+  }
+});
+
+app.get('/api/admin/tickets/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('tickets')
+      .select('*')
+      .eq('id', req.params.id)
+      .maybeSingle();
+
+    if (error && !isMissingRowError(error)) return sendServerError(res, error);
+    if (!data) return res.status(404).json({ error: 'Ticket not found.' });
+
+    res.json(data);
+  } catch (error) {
+    sendServerError(res, error);
+  }
+});
+
+app.put('/api/admin/tickets/:id', verifyAdmin, async (req, res) => {
+  const { status, scheduled_for } = req.body;
+  const payload = {};
+
+  if (status) {
+    if (!TICKET_STATUSES.includes(status)) {
+      return res.status(400).json({
+        error: `Invalid status. Must be one of: ${TICKET_STATUSES.join(', ')}`,
+      });
+    }
+    payload.status = status;
+    if (status === 'Resolved') payload.resolved_at = new Date().toISOString();
+  }
+
+  if (scheduled_for) {
+    const scheduledAt = new Date(scheduled_for);
+    if (Number.isNaN(scheduledAt.getTime())) {
+      return res.status(400).json({ error: 'scheduled_for must be a valid date/time.' });
+    }
+    payload.scheduled_for = scheduledAt.toISOString();
+    payload.reschedule_email_sent_at = null;
+    payload.rescheduled_at = new Date().toISOString();
+  }
+
+  if (!Object.keys(payload).length) {
+    return res.status(400).json({ error: 'No ticket updates were provided.' });
+  }
+
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('tickets')
+      .update(payload)
+      .eq('id', req.params.id)
+      .select('*')
+      .maybeSingle();
+
+    if (error && !isMissingRowError(error)) return sendServerError(res, error);
+    if (!data) return res.status(404).json({ error: 'Ticket not found.' });
+
+    res.json({ message: 'Ticket updated successfully.', ticket: data });
+  } catch (error) {
+    sendServerError(res, error);
+  }
+});
+
+app.post('/api/admin/tickets/send-overdue-reminders', verifyAdmin, async (req, res) => {
+  try {
+    const result = await sendOverdueTicketReminders();
+    res.json(result);
+  } catch (error) {
+    sendServerError(res, error, 'Failed to send overdue ticket reminders.');
+  }
+});
+
+async function handleCronTicketReminders(req, res) {
+  const expectedSecret = process.env.OVERDUE_TICKET_CRON_SECRET || process.env.CRON_SECRET;
+  const authHeader = req.headers.authorization || '';
+  const bearerSecret = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  const providedSecret = req.headers['x-cron-secret'] || req.query.secret || bearerSecret;
+
+  if (!expectedSecret) {
+    return res.status(503).json({ error: 'Cron reminders are not configured.' });
+  }
+
+  if (expectedSecret && providedSecret !== expectedSecret) {
+    return res.status(401).json({ error: 'Invalid cron secret.' });
+  }
+
+  try {
+    const result = await sendOverdueTicketReminders();
+    res.json(result);
+  } catch (error) {
+    sendServerError(res, error, 'Failed to send overdue ticket reminders.');
+  }
+}
+
+app.get('/api/cron/tickets/send-overdue-reminders', handleCronTicketReminders);
+app.post('/api/cron/tickets/send-overdue-reminders', handleCronTicketReminders);
 
 app.post('/api/orders', async (req, res) => {
   const {
